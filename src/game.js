@@ -1,4 +1,4 @@
-import Phaser from 'phaser'
+import Phaser from './phaser-custom'
 import TitleScene from './scenes/titleScene'
 import MainScene from './scenes/mainScene'
 import EndScene from './scenes/endScene'

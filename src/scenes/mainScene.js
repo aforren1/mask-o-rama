@@ -23,6 +23,7 @@ const TARGET_REF_ANGLE = 270 // degrees, and should be pointed straight up
 const CURSOR_RESTORE_POINT = 30 //
 const MOVE_SCALE = 0.75 // factor to combat pointer acceleration
 const PI = Math.PI
+const MAX_STAIRCASE = 12
 // generate the noise texture (512x512 so we're pretty sure it'll fit any screen, esp once
 // it gets scaled up to 3x3 pixel blocks)
 const NOISE_DIM = 512
@@ -118,7 +119,7 @@ export default class MainScene extends Phaser.Scene {
       this.trials = generateTrials(40, false)
       this.typing_speed = 50
     }
-    this.staircase = new Staircase(1, 12, 1) // min of 1 frame, max of 10 frames (probably 166ms on 60hz machines?), steps of 1 frame
+    this.staircase = new Staircase(1, MAX_STAIRCASE, 1) // min of 1 frame, max of 10 frames (probably 166ms on 60hz machines?), steps of 1 frame
 
     // user cursor
     this.user_cursor = this.add.circle(CURSOR_RESTORE_POINT, CURSOR_RESTORE_POINT, CURSOR_SIZE_RADIUS, DARKGRAY) // controlled by user (gray to reduce contrast)
@@ -182,7 +183,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.instructions = TypingText(this, /* half width */-400, -hd2 + 50, '', {
       fontFamily: 'Verdana',
-      fontSize: 26,
+      fontSize: 22,
       wrap: {
         mode: 'word',
         width: 800
@@ -280,7 +281,7 @@ export default class MainScene extends Phaser.Scene {
     })
     // initial instructions (move straight through target)
     instruct_txts['instruct_basic'] =
-      `You will see one target.\n\nHold your mouse in the circle at the center of the screen to start a trial.\n\nWhen the target turns [color=#00ff00]green[/color], move your mouse straight through it. The target will turn [color=#777777]gray[/color] when you have moved far enough.\n\nAlways try to make [b][color=yellow]straight[/color][/b] mouse movements.\n\nAfter each reach, we will ask you a question:\n\n[size=32]Which side of the target do you think the cursor went toward, left (press the [b][color=yellow]${rk['side']['left']}[/color][/b] key), or right (press the [b][color=yellow]${rk['side']['right']}[/color][/b] key)?[/size]\n\nFor example, see below: the cursor goes to the right of the target, so we press the [b][color=yellow]${rk['side']['right']}[/color][/b] key.`
+      `You will see one target.\n\nHold your mouse in the circle at the center of the screen to start a trial.\n\nWhen the target turns [color=#00ff00]green[/color], move your mouse straight through it. The target will turn [color=#777777]gray[/color] when you have moved far enough.\n\nAlways try to make [b][color=yellow]straight[/color][/b] mouse movements.\n\nAfter each reach, we will ask you a question:\n\n[size=28]Which side of the target do you think the cursor went toward, left (press the [b][color=yellow]${rk['side']['left']}[/color][/b] key), or right (press the [b][color=yellow]${rk['side']['right']}[/color][/b] key)?[/size]\n\nFor example, see below: the cursor goes to the right of the target, so we press the [b][color=yellow]${rk['side']['right']}[/color][/b] key.`
 
     instruct_txts['instruct_mask'] =
       'In this section, the cursor will be [color=yellow]hidden[/color] by an image at the beginning and end of the movement. The image will be temporarily removed partway through the movement, and you will be able to see the cursor then.\n\nWe will ask you to answer the same question as before:\n\nWhich side of the target do you think the cursor went toward?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
@@ -411,11 +412,12 @@ export default class MainScene extends Phaser.Scene {
             targets: this.fake_cursor,
             x: x,
             y: y,
-            duration: 100,
+            duration: MAX_STAIRCASE,
+            useFrames: true,
             paused: true,
             onUpdate: () => {
               let fake_extent = Math.sqrt(Math.pow(this.fake_cursor.x, 2) + Math.pow(this.fake_cursor.y, 2))
-              if (fake_extent >= 0.95 * TARGET_DISTANCE) {
+              if (fake_extent >= 0.98 * TARGET_DISTANCE) {
                 this.fake_cursor.visible = false
               }
             },

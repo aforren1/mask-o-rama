@@ -17,7 +17,7 @@ export default class EndScene extends Phaser.Scene {
     let last_q = this.add.
       text(center, 100, `Last question!\nSelect which input device\nyou used${extra_txt}`, {
         fontFamily: 'Verdana',
-        fontSize: 40,
+        fontSize: 20,
         align: 'center'
       }).
       setOrigin(0.5, 0.5)
