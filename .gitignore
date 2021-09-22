@@ -1,0 +1,5 @@
+node_modules/
+public/bundle.js
+
+# Local Netlify folder
+.netlify

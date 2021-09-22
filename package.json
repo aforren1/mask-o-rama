@@ -1,0 +1,26 @@
+{
+    "name": "esbuild-test",
+    "version": "0.0.1",
+    "description": "Phaser 3 + ESBuild + ES6 Template Project",
+    "scripts": {
+        "dev": "esbuild src/game.js --outfile=public/bundle.js --target=es6 --servedir=public --bundle --define:DEBUG=true",
+        "prod": "esbuild src/game.js --outfile=public/bundle.js --minify --target=es6 --bundle --define:DEBUG=false",
+        "prod-dev": "npm run prod && netlify dev"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aforren1/esbuild-test.git"
+    },
+    "bugs": {
+        "url": "https://github.com/aforren1/esbuild-test/issues"
+    },
+    "license": "MIT",
+    "homepage": "https://github.com/aforren1/esbuild-test#readme",
+    "devDependencies": {
+        "esbuild": "^0.12.25",
+        "eslint": "^7.32.0",
+        "phaser": "aforren1/phaser#1665b3f",
+        "phaser3-rex-plugins": "^1.1.59",
+        "ua-parser-js": "^0.7.28"
+    }
+}
