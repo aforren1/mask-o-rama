@@ -78,8 +78,7 @@ export default class MainScene extends Phaser.Scene {
     this.all_data = {
       practice_basic: [], // practice reaching with vis feedback
       practice_mask: [],
-      probe: [],
-      checks: {} // attention checks (filled in by questions)
+      probe: []
     }
   }
 
