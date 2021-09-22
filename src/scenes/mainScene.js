@@ -60,6 +60,11 @@ function randint(min, max) {
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
+
+function randchoice(arr) {
+  return arr[Math.floor(arr.length * Math.random())]
+}
+
 function countTrials(array) {
   return array.filter((v) => !v['trial_type'].startsWith('instruct_')).length
 }

@@ -1,5 +1,7 @@
 Site: https://actlab-mask.netlify.app
 
+https://actlabyale.github.io/web-consent/prolific/?dest=https://actlab-mask.netlify.app&PROLIFIC_PID={{%PROLIFIC_PID%}}&STUDY_ID={{%STUDY_ID%}}&SESSION_ID={{%SESSION_ID%}}
+
 Setting up eslint to run on save: https://www.digitalocean.com/community/tutorials/workflow-auto-eslinting
 
 Note that `--servedir` doesn't write the file to disk (see https://esbuild.github.io/api/#serve)

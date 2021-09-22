@@ -55,11 +55,6 @@ window.addEventListener('load', () => {
     url_params.get('id') ||
     randomString(8)
   let reference_angle = 270
-  // rotation or clamp, default to clamp
-  let manipulation = url_params.get('manipulation') || 'clamp'
-  if (!['rotation', 'clamp'].includes(manipulation)) {
-    console.error('Manipulation not found.')
-  }
   let ua_res = new UAParser().getResult()
   let user_config = {
     id: id.slice(0, 8), // just the first part of the ID, we don't need to store the whole thing
@@ -69,7 +64,6 @@ window.addEventListener('load', () => {
     description: 'consciousness clamp v1',
     datetime: new Date(),
     already_visited: localStorage.getItem('conscious-clamp') !== null,
-    manipulation: manipulation,
     width: game.config.width,
     height: game.config.height,
     renderer: game.config.renderType === Phaser.CANVAS ? 'canvas' : 'webgl',
