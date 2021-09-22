@@ -22,7 +22,7 @@ const TARGET_DISTANCE = 300 // *hopefully* they have 300px available?
 const TARGET_REF_ANGLE = 270 // degrees, and should be pointed straight up
 const CURSOR_RESTORE_POINT = 30 //
 const MOVE_SCALE = 0.75 // factor to combat pointer acceleration
-
+const PI = Math.PI
 // generate the noise texture (512x512 so we're pretty sure it'll fit any screen, esp once
 // it gets scaled up to 3x3 pixel blocks)
 const NOISE_DIM = 512
@@ -479,7 +479,7 @@ export default class MainScene extends Phaser.Scene {
           correct = current_trial.clamp_angle < 0 && resp.side === 'l' ||
                     current_trial.clamp_angle > 0 && resp.side === 'r'
           this.staircase.update(correct)
-          console.log(`frames: ${cur_stair}, correct: ${correct}`)
+          // console.log(`frames: ${cur_stair}, correct: ${correct}`)
         }
         // deal with trial data
         let trial_data = {
@@ -496,8 +496,6 @@ export default class MainScene extends Phaser.Scene {
           dropped_frame_count: this.dropped_frame_count
         }
         let combo_data = merge_data(current_trial, trial_data)
-        console.log(this.dts)
-        console.log(combo_data.n_frames)
         let delay = 1200
         let fbdelay = 0
         // feedback about movement angle (if non-imagery)
