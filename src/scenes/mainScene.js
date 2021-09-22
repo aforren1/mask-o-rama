@@ -389,6 +389,9 @@ export default class MainScene extends Phaser.Scene {
             paused: true,
             onStart: () => {
               this.noise.visible = false
+              // scramble the mask
+              this.noise.setPosition(randint(-20, 20), randint(-20, 20))
+              this.noise.rotation = randchoice([0, PI / 2, PI, PI * 3 / 2])
             },
             onComplete: () => {
               this.noise.visible = true
