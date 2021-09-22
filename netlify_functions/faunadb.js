@@ -2,14 +2,6 @@
 const faunadb = require('faunadb')
 const q = faunadb.query
 
-/*
-Couple of TODOs:
-
- - Creating documents for subject in separate collections for different purposes
-    (e.g. one for log, one for data)
- - Update log periodically (on timer or on event)
- - Update data perodically (every 10 trials? every block?)
-*/
 exports.handler = async(event, context) => {
   // create client w/ secret
   const client = new faunadb.Client({
