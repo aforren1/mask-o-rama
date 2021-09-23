@@ -23,7 +23,7 @@ const TARGET_REF_ANGLE = 270 // degrees, and should be pointed straight up
 const CURSOR_RESTORE_POINT = 30 //
 const MOVE_SCALE = 0.75 // factor to combat pointer acceleration
 const PI = Math.PI
-const MAX_STAIRCASE = 12
+const MAX_STAIRCASE = 10
 // generate the noise texture (512x512 so we're pretty sure it'll fit any screen, esp once
 // it gets scaled up to 3x3 pixel blocks)
 const NOISE_DIM = 512

@@ -7,7 +7,6 @@ export default class EndScene extends Phaser.Scene {
     super({ key: 'EndScene' })
   }
   create(today_data) {
-    console.log(today_data)
     let height = this.game.config.height
     let center = height / 2
     let id = this.game.user_config.id
