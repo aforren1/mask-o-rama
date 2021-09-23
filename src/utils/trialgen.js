@@ -21,8 +21,7 @@ function shuffleArray(array) {
   }
 }
 
-export default function generateTrials(repeats, is_debug = false) {
-  const CLAMP_ANGLE = 15 // TODO: parameterize/pick something smarter?
+export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = false) {
   let probe_trial_types = [
     { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: CLAMP_ANGLE },
     { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: -CLAMP_ANGLE }

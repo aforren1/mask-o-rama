@@ -66,6 +66,7 @@ window.addEventListener('load', () => {
     already_visited: localStorage.getItem('conscious-clamp') !== null,
     width: game.config.width,
     height: game.config.height,
+    clamp_size: 15,
     renderer: game.config.renderType === Phaser.CANVAS ? 'canvas' : 'webgl',
     // only take a subset of the UA results-- we don't need everything
     user_agent: {
