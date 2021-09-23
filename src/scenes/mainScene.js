@@ -4,7 +4,7 @@ import BasicExample from '../objects/examples'
 import merge_data from '../utils/merge'
 import { clamp } from '../utils/clamp'
 import signedAngleDeg from '../utils/angulardist'
-import { mad, median } from '../utils/medians'
+import { mad } from '../utils/medians'
 import generateTrials from '../utils/trialgen'
 import make_thick_arc from '../utils/arc'
 import { Staircase } from '../utils/staircase'
@@ -14,6 +14,7 @@ const GREEN = 0x39ff14 // actually move to the target
 const RED = 0xff0000
 const GRAY = 0x666666
 const DARKGRAY = 0x444444
+const LIGHTBLUE = 0x86c5da
 const TARGET_SIZE_RADIUS = 15
 const CURSOR_SIZE_RADIUS = 5
 const CENTER_SIZE_RADIUS = 15
@@ -21,7 +22,7 @@ const MOVE_THRESHOLD = 4
 const TARGET_DISTANCE = 300 // *hopefully* they have 300px available?
 const TARGET_REF_ANGLE = 270 // degrees, and should be pointed straight up
 const CURSOR_RESTORE_POINT = 30 //
-const MOVE_SCALE = 0.75 // factor to combat pointer acceleration
+const MOVE_SCALE = 0.5 // factor to combat pointer acceleration
 const PI = Math.PI
 const MAX_STAIRCASE = 10
 // generate the noise texture (512x512 so we're pretty sure it'll fit any screen, esp once
@@ -119,11 +120,13 @@ export default class MainScene extends Phaser.Scene {
       this.trials = generateTrials(40, false)
       this.typing_speed = 50
     }
-    this.staircase = new Staircase(1, MAX_STAIRCASE, 1) // min of 1 frame, max of 10 frames (probably 166ms on 60hz machines?), steps of 1 frame
+    // min of 1 frame, max of 10 frames (probably 166ms on 60hz machines?), steps of 1 frame
+    // 1 up, 2 down (i.e. 2 correct to move a step down, 1 incorrect to move a step up)
+    this.staircase = new Staircase(1, MAX_STAIRCASE, 1, 2)
 
     // user cursor
-    this.user_cursor = this.add.circle(CURSOR_RESTORE_POINT, CURSOR_RESTORE_POINT, CURSOR_SIZE_RADIUS, DARKGRAY) // controlled by user (gray to reduce contrast)
-    this.fake_cursor = this.add.circle(0, 0, CURSOR_SIZE_RADIUS, DARKGRAY).setVisible(false) // animated by program
+    this.user_cursor = this.add.circle(CURSOR_RESTORE_POINT, CURSOR_RESTORE_POINT, CURSOR_SIZE_RADIUS, LIGHTBLUE) // controlled by user (gray to reduce contrast)
+    this.fake_cursor = this.add.circle(0, 0, CURSOR_SIZE_RADIUS, LIGHTBLUE).setVisible(false) // animated by program
     this.dbg_cursor = this.add.circle(0, 0, CURSOR_SIZE_RADIUS, RED, 1).setVisible(false && this.is_debug) // "true" cursor pos without clamp/rot, only in debug mode
 
     // center
