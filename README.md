@@ -1,6 +1,6 @@
 Site: https://actlab-mask.netlify.app
 
-https://actlabyale.github.io/web-consent/prolific/?dest=https://actlab-mask.netlify.app&PROLIFIC_PID={{%PROLIFIC_PID%}}&STUDY_ID={{%STUDY_ID%}}&SESSION_ID={{%SESSION_ID%}}
+https://actlabyale.github.io/web-consent/prolific/?PROLIFIC_PID=5f060d4118d7fd11fd182dee&SESSION_ID=0jiv08k0e&STUDY_ID=614b951cf352bc50a73ee54f&dest=https://actlab-mask.netlify.app&preview=1
 
 Setting up eslint to run on save: https://www.digitalocean.com/community/tutorials/workflow-auto-eslinting
 

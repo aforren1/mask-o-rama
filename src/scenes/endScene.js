@@ -13,7 +13,7 @@ export default class EndScene extends Phaser.Scene {
     let id = this.game.user_config.id
     let is_sona = this.game.user_config.is_sona
     this.scale.stopFullscreen()
-    let extra_txt = is_sona ? '.' : ' (will redirect within\n~10 seconds after selection).'
+    let extra_txt = is_sona ? '.' : ' (will redirect within\n10 seconds after selection).'
     let last_q = this.add.
       text(center, 100, `Last question!\nSelect which input device\nyou used${extra_txt}`, {
         fontFamily: 'Verdana',
