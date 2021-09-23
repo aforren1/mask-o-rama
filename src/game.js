@@ -61,7 +61,7 @@ window.addEventListener('load', () => {
     is_prolific: url_params.get('PROLIFIC_PID') !== null,
     is_sona: url_params.get('SONA_ID') !== null,
     institution: 'yale',
-    description: 'consciousness clamp v1',
+    description: 'consciousness clamp v2',
     datetime: new Date(),
     already_visited: localStorage.getItem('conscious-clamp') !== null,
     width: game.config.width,
