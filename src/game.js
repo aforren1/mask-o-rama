@@ -61,7 +61,7 @@ window.addEventListener('load', () => {
     is_prolific: url_params.get('PROLIFIC_PID') !== null,
     is_sona: url_params.get('SONA_ID') !== null,
     institution: 'yale',
-    description: 'consciousness clamp v2',
+    description: 'consciousness clamp v3, movement duration matching',
     datetime: new Date(),
     already_visited: localStorage.getItem('conscious-clamp') !== null,
     width: game.config.width,
@@ -75,7 +75,7 @@ window.addEventListener('load', () => {
     },
     fullscreen_supported: document.fullscreenEnabled, // this is pretty important for us?
     debug: url_params.get('debug') !== null,
-    version: 1,
+    version: 3,
     reference_angle: reference_angle
   }
   game.user_config = user_config // patch in to pass into game

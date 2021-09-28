@@ -4,7 +4,7 @@ import BasicExample from '../objects/examples'
 import merge_data from '../utils/merge'
 import { clamp } from '../utils/clamp'
 import signedAngleDeg from '../utils/angulardist'
-import { mad } from '../utils/medians'
+import { mad, median } from '../utils/medians'
 import generateTrials from '../utils/trialgen'
 import make_thick_arc from '../utils/arc'
 import { Staircase } from '../utils/staircase'
@@ -24,7 +24,7 @@ const TARGET_REF_ANGLE = 270 // degrees, and should be pointed straight up
 const CURSOR_RESTORE_POINT = 30 //
 const MOVE_SCALE = 0.5 // factor to combat pointer acceleration
 const PI = Math.PI
-const MAX_STAIRCASE = 10
+let MAX_STAIRCASE = 10 // in frames
 // generate the noise texture (512x512 so we're pretty sure it'll fit any screen, esp once
 // it gets scaled up to 3x3 pixel blocks)
 const NOISE_DIM = 512
@@ -98,6 +98,7 @@ export default class MainScene extends Phaser.Scene {
     // used for imagery component
     this.rts = []
     this.movets = []
+    this.practice_mask_mts = [] // used for setting simulated clamp speed & max of staircase
     this.is_debug = user_config.debug
 
     // based on mouse hand, select response keys
@@ -122,6 +123,7 @@ export default class MainScene extends Phaser.Scene {
     }
     // min of 1 frame, max of 10 frames (probably 166ms on 60hz machines?), steps of 1 frame
     // 1 up, 2 down (i.e. 2 correct to move a step down, 1 incorrect to move a step up)
+    // this ends up getting overwritten once we've computed the per-user movement time
     this.staircase = new Staircase(1, MAX_STAIRCASE, 1, 2)
 
     // user cursor
@@ -298,12 +300,29 @@ export default class MainScene extends Phaser.Scene {
     case states.INSTRUCT:
       if (this.entering) {
         this.entering = false
+        let tt = this.current_trial.trial_type
+        // if we're in probe phase, re-figure out the staircase
+        if (tt === 'instruct_probe') {
+          let med_mt = median(this.practice_mask_mts) // calculate median movement time across ~ 10 reaches
+          // convert to frame space and round up
+          let per_ms = 1000 / this.game.user_config.refresh_rate_guess
+          let frame_mt = Math.round(med_mt / per_ms)
+          // make sure we're > 80 ms or so
+          let min_frame = Math.ceil(80 / per_ms)
+          console.log(`New max frame: ${frame_mt} (min is ${min_frame})`)
+          this.game.user_config['est_mt'] = frame_mt
+          frame_mt = Math.max(min_frame, frame_mt)
+          this.game.user_config['used_mt'] = frame_mt
+          // set up new staircase
+          this.staircase = new Staircase(1, frame_mt, 1, 2)
+          MAX_STAIRCASE = frame_mt
+        }
+
         // show the right instruction text, wait until typing complete
         // and response made
         this.noise.visible = false
         this.instructions.visible = true
         this.darkener.visible = true
-        let tt = this.current_trial.trial_type
         this.instructions.start(instruct_txts[tt], this.typing_speed)
         if (tt === 'instruct_basic') {
           this.examples.basic.visible = true
@@ -519,6 +538,9 @@ export default class MainScene extends Phaser.Scene {
         if (!(reaction_time === null)) {
           this.rts.push(reaction_time)
           this.movets.push(reach_time)
+          if (current_trial.trial_type === 'practice_mask') {
+            this.practice_mask_mts.push(reach_time)
+          }
         }
         let punished = false
         let punish_delay = 3000

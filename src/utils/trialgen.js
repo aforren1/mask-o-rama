@@ -41,7 +41,7 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
   }
 
   out.push({ trial_type: 'instruct_mask' })
-  for (let i = 0; i < reps; i++) {
+  for (let i = 0; i < reps * 2; i++) {
     out.push({
       trial_type: 'practice_mask',
       ask_questions: true,
