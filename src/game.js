@@ -2,13 +2,12 @@ import Phaser from './phaser-custom'
 import TitleScene from './scenes/titleScene'
 import MainScene from './scenes/mainScene'
 import EndScene from './scenes/endScene'
-// import 'devtools-detect'
 import UAParser from 'ua-parser-js'
 
 import BBCodeTextPlugin from 'phaser3-rex-plugins/plugins/bbcodetext-plugin.js'
 import TextTypingPlugin from 'phaser3-rex-plugins/plugins/texttyping-plugin.js'
 
-let small_dim = window.screen.height // could fix to 1000px, but this way things will look crisper
+let small_dim = 1000 // fixed at 1000px so font scaling is constant!
 const phaser_config = {
   type: Phaser.AUTO,
   backgroundColor: '#000000',
@@ -75,7 +74,7 @@ window.addEventListener('load', () => {
     },
     fullscreen_supported: document.fullscreenEnabled, // this is pretty important for us?
     debug: url_params.get('debug') !== null,
-    version: 3,
+    version: 4,
     reference_angle: reference_angle
   }
   game.user_config = user_config // patch in to pass into game
