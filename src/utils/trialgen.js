@@ -21,10 +21,14 @@ function shuffleArray(array) {
   }
 }
 
-export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = false) {
+export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = false, n_catch_per_10_clamp = 4) {
   let probe_trial_types = [
     { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: CLAMP_ANGLE },
     { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: -CLAMP_ANGLE }
+  ]
+
+  let catch_trial_types = [
+    { trial_type: 'catch', ask_questions: true, is_masked: true, is_clamped: false, clamp_angle: 0}
   ]
 
   let reps = is_debug ? 1 : 5
@@ -52,7 +56,8 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
   }
 
   out.push({ trial_type: 'instruct_probe' })
-  // do groups of 10 trials at a time. 5 each trial type, and control repeats (3 max?)
+  // do groups of 10 trials at a time. 5 each trial type
+  // append catch trials
   let n_trials = repeats * probe_trial_types.length
   if (n_trials % 10 !== 0) {
     console.error('Make sure repeats leads to something divisible by 10.')
@@ -60,43 +65,16 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
   }
   // generate 10 trials to use as prototype
   let proto = Array(5).fill(probe_trial_types).flat()
+  // append catch trials (no cursor visible)
+  proto.push(...Array(n_catch_per_10_clamp).fill(catch_trial_types).flat())
   for (let i = 0; i < n_trials / 10; i++) {
-    whl: while (true) {
-      shuffleArray(proto)
-      // first check internal consistency
-      for (let j = 3; j < proto.length; j++) {
-        let pj = proto[j].clamp_angle
-        if (pj === proto[j - 1].clamp_angle && pj === proto[j - 2].clamp_angle && pj === proto[j - 3].clamp_angle) {
-          continue whl
-        }
-      }
-      // then external consistency
-      if (i > 0) {
-        let len = out.length
-        let p2 = proto[2].clamp_angle
-        let p1 = proto[1].clamp_angle
-        let p0 = proto[0].clamp_angle
-        let pm1 = out[len - 1].clamp_angle
-        let pm2 = out[len - 2].clamp_angle
-        let pm3 = out[len - 3].clamp_angle
-
-        if (p2 === p1 && p2 === p0 && p2 === pm1) {
-          continue whl
-        }
-        if (p1 === p0 && p1 === pm1 && p1 === pm2) {
-          continue whl
-        }
-        if (p0 === pm1 && p0 === pm2 && p0 === pm3) {
-          continue whl
-        }
-      }
-      break // we have proper order now
-    }
+    // we used to have fancy
+    shuffleArray(proto)
     // add to out
     for (let j = 0; j < proto.length; j++) {
       out.push(proto[j])
     }
   }
-
+  console.log(out)
   return out
 }
