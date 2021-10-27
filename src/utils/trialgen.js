@@ -21,7 +21,7 @@ function shuffleArray(array) {
   }
 }
 
-export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = false, n_catch_per_10_clamp = 4) {
+export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = false, n_catch_per_10_clamp = 2) {
   let probe_trial_types = [
     { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: CLAMP_ANGLE, delay: 0, is_cursor_vis: true, is_catch: false },
     { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: -CLAMP_ANGLE, delay: 0, is_cursor_vis: true, is_catch: false }
@@ -79,6 +79,9 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
     // add to out
     for (let j = 0; j < proto.length; j++) {
       out.push(proto[j])
+    }
+    if (i === 4) {
+      out.push({trial_type: 'break'})
     }
   }
   console.log(out)
