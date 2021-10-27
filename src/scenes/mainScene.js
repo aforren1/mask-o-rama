@@ -311,11 +311,12 @@ export default class MainScene extends Phaser.Scene {
           let frame_mt = Math.round(med_mt / per_ms)
           // make sure we're > 80 ms or so
           let min_frame = Math.ceil(80 / per_ms)
-          let max_frame = Math.ceil(200 / per_ms)
+          let max_frame = Math.floor(200 / per_ms)
           console.log(`New max frame est: ${frame_mt} (min is ${min_frame}, max is ${max_frame})`)
           this.game.user_config['est_mt'] = frame_mt
           frame_mt = Math.min(Math.max(min_frame, frame_mt), max_frame)
           this.game.user_config['used_mt'] = frame_mt
+          console.log(`Using ${frame_mt}.`)
           // set up new staircase
           this.staircase = new Staircase(1, frame_mt, 1, 2)
           MAX_STAIRCASE = frame_mt
