@@ -52,21 +52,50 @@ export default class TitleScene extends Phaser.Scene {
           this.game.user_config['refresh_rate_guess'] = nearest_rate
           // TODO: https://docs.google.com/document/d/17pvFMFqtAIx0ZA6zMZRU_A2-VnjhNX9QlN1Cgy-3Wdg/edit
           this.input.mouse.requestPointerLock()
-          this.scene.start('MainScene')
+          let battery_config = {
+            has_api: false,
+            charging: false
+          }
+          if (navigator.getBattery) {
+            // we actually have battery status
+            navigator.getBattery().then(battery => {
+              battery_config['has_api'] = true
+              battery_config['charging'] = battery.charging
+              // all other fields are not useful AFAIK
+              this.game.user_config['battery'] = battery_config
+              this.scene.start('MainScene')
+            })
+          } else {
+            // who knows about battery
+            this.game.user_config['battery'] = battery_config
+            this.scene.start('MainScene')
+          }
         }
       })
     }
 
     this.add.rectangle(center - 6, center, 6, 500, 0xffffff)
 
+    this.add.rexBBCodeText(center, 120, 'If using a laptop,\nplease plug into a wall outlet\nbefore continuing for best performance.', {
+      fontFamily: 'Verdana',
+      fontStyle: 'bold',
+      fontSize: 40,
+      color: '#dddddd',
+      stroke: '#444444',
+      strokeThickness: 6,
+      align: 'center',
+      backgroundColor: '#460000',
+      padding: {left: 5, right: 5, top: 5, bottom: 5}
+    }).setOrigin(0.5, 0.5)
+
     let left = this.add.
       text(center - 250, center, 'Click this side\nif using the mouse\nwith your left hand.', {
         fontFamily: 'Verdana',
         fontStyle: 'bold',
-        fontSize: 35,
+        fontSize: 32,
         color: '#dddddd',
         stroke: '#444444',
-        strokeThickness: 6,
+        strokeThickness: 4,
         align: 'center'
       }).
       setOrigin(0.5, 0.5).
@@ -78,10 +107,10 @@ export default class TitleScene extends Phaser.Scene {
       text(center + 250, center, 'Click this side\nif using the mouse\nwith your right hand.', {
         fontFamily: 'Verdana',
         fontStyle: 'bold',
-        fontSize: 35,
+        fontSize: 32,
         color: '#dddddd',
         stroke: '#444444',
-        strokeThickness: 6,
+        strokeThickness: 4,
         align: 'center'
       }).
       setOrigin(0.5, 0.5).
