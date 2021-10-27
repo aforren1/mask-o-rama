@@ -143,7 +143,7 @@ export default class MainScene extends Phaser.Scene {
     this.q1 = this.add.text(0, hd2 / 3, `Which side did the cursor go toward,\n left (${rk['side']['left']}) or right (${rk['side']['right']})?`, {
       fontFamily: 'Verdana',
       fontStyle: 'bold',
-      fontSize: 50,
+      fontSize: 40,
       color: '#ffffff',
       align: 'center',
       stroke: '#444444',
@@ -293,6 +293,8 @@ export default class MainScene extends Phaser.Scene {
 
     instruct_txts['instruct_probe'] =
       'Great job! We\'ll continue these trials until the end.\n\nThe amount of time the cursor is [color=yellow]hidden[/color] may vary over time and you may need to guess sometimes, but always do your best to make [color=yellow]straight mouse movements to the target[/color] and answer the question as best you can.'
+
+    instruct_txts['break'] = 'Take a break! Remember to make [color=yellow]straight mouse movements to the target[/color] and answer the question as best you can.'
   } // end create
 
   update() {
@@ -327,7 +329,7 @@ export default class MainScene extends Phaser.Scene {
         if (tt === 'instruct_basic') {
           this.examples.basic.visible = true
           this.examples.basic.play()
-        } else if (tt === 'instruct_mask' || tt === 'instruct_probe') {
+        } else if (tt === 'instruct_mask' || tt === 'instruct_probe' || tt === 'break') {
           this.examples.mask.visible = true
           this.examples.mask.play()
         }
@@ -404,9 +406,16 @@ export default class MainScene extends Phaser.Scene {
           cursor_angle: 0
         })
         this.target.fillColor = GREEN
+        this.user_cursor.visible = current_trial.is_cursor_vis
+        let delay_frames = Math.round(this.game.user_config.refresh_rate_guess * (0.001 * current_trial.delay))
+        let duration = 1 // only show one frame on catch, no mouse
+        if (!current_trial.is_catch) {
+          duration = this.staircase.next()
+        }
         if (current_trial.is_masked) {
           this.mask_twn = this.tweens.add({
             targets: this.noise,
+            delay: delay_frames,
             alpha: 1,
             paused: true,
             onStart: () => {
@@ -418,7 +427,7 @@ export default class MainScene extends Phaser.Scene {
             onComplete: () => {
               this.noise.visible = true
             },
-            duration: this.staircase.next(),
+            duration: duration,
             useFrames: true
           })
         }
@@ -428,10 +437,11 @@ export default class MainScene extends Phaser.Scene {
           let rad = Phaser.Math.DegToRad(current_trial.clamp_angle + TARGET_REF_ANGLE)
           let x = TARGET_DISTANCE * Math.cos(rad)
           let y = TARGET_DISTANCE * Math.sin(rad)
-          this.fake_cursor.visible = true
+          this.fake_cursor.visible = current_trial.is_cursor_vis
           this.done_curs = false
           this.curs_twn = this.tweens.add({
             targets: this.fake_cursor,
+            delay: delay_frames,
             x: x,
             y: y,
             duration: MAX_STAIRCASE,
@@ -496,7 +506,7 @@ export default class MainScene extends Phaser.Scene {
         let correct = true
         let resp = this.resp_queue[0]
         let cur_stair = this.staircase.next()
-        if (current_trial.is_clamped) {
+        if (current_trial.is_clamped && !current_trial.is_catch && current_trial.clamp_angle !== 0) {
           // we can know which side easily b/c it's clamped
           // only update staircase when clamped
           correct = current_trial.clamp_angle < 0 && resp.side === 'l' ||

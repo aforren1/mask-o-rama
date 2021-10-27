@@ -23,12 +23,12 @@ function shuffleArray(array) {
 
 export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = false, n_catch_per_10_clamp = 4) {
   let probe_trial_types = [
-    { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: CLAMP_ANGLE },
-    { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: -CLAMP_ANGLE }
+    { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: CLAMP_ANGLE, delay: 0, is_cursor_vis: true, is_catch: false },
+    { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: -CLAMP_ANGLE, delay: 0, is_cursor_vis: true, is_catch: false }
   ]
 
   let catch_trial_types = [
-    { trial_type: 'catch', ask_questions: true, is_masked: true, is_clamped: false, clamp_angle: 0}
+    { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: false, clamp_angle: 0, delay: 0, is_cursor_vis: false, is_catch: true }
   ]
 
   let reps = is_debug ? 1 : 5
@@ -40,7 +40,10 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       ask_questions: true,
       is_masked: false,
       is_clamped: false,
-      clamp_angle: 0
+      clamp_angle: 0,
+      delay: 0,
+      is_cursor_vis: true,
+      is_catch: false
     })
   }
 
@@ -51,7 +54,10 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       ask_questions: true,
       is_masked: true,
       is_clamped: false,
-      clamp_angle: 0
+      clamp_angle: 0,
+      delay: 0,
+      is_cursor_vis: true,
+      is_catch: false
     })
   }
 
