@@ -114,11 +114,11 @@ export default class MainScene extends Phaser.Scene {
 
     // set number of repeats
     if (this.is_debug) {
-      this.trials = generateTrials(5, user_config.clamp_size, true)
+      this.trials = generateTrials(5, user_config.clamp_size, true, 2)
       this.typing_speed = 1
     } else {
       // 50 repeats = 100 trials in probe section
-      this.trials = generateTrials(50, user_config.clamp_size, false)
+      this.trials = generateTrials(50, user_config.clamp_size, false, 2)
       this.typing_speed = 50
     }
     // min of 1 frame, max of 10 frames (probably 166ms on 60hz machines?), steps of 1 frame
