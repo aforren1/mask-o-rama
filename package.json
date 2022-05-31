@@ -1,5 +1,5 @@
 {
-    "name": "esbuild-test",
+    "name": "mask-o-rama",
     "version": "0.0.1",
     "description": "Phaser 3 + ESBuild + ES6 Template Project",
     "scripts": {
@@ -17,15 +17,15 @@
     "license": "MIT",
     "homepage": "https://github.com/aforren1/esbuild-test#readme",
     "devDependencies": {
-        "esbuild": "^0.12.25",
-        "eslint": "^7.32.0",
+        "esbuild": "^0.14.42",
+        "eslint": "^8.16.0",
         "phaser": "aforren1/phaser#1665b3f",
-        "phaser3-rex-plugins": "^1.1.59",
-        "ua-parser-js": "^0.7.28"
+        "phaser3-rex-plugins": "^1.1.69",
+        "ua-parser-js": "^1.0.2"
     },
     "dependencies": {
-        "faunadb": "^4.1.1",
+        "faunadb": "^4.5.4",
         "form-data": "^4.0.0",
-        "mailgun.js": "^3.5.9"
+        "mailgun.js": "^7.0.0"
     }
 }

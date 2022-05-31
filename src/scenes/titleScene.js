@@ -74,7 +74,7 @@ export default class TitleScene extends Phaser.Scene {
       })
     }
 
-    this.add.rectangle(center - 6, center, 6, 500, 0xffffff)
+    this.add.rectangle(center - 6, center + 100, 6, 500, 0xffffff)
 
     this.add.rexBBCodeText(center, 120, 'If using a laptop,\nplease plug into a wall outlet\nbefore continuing for best performance.', {
       fontFamily: 'Verdana',
@@ -88,14 +88,22 @@ export default class TitleScene extends Phaser.Scene {
       padding: {left: 5, right: 5, top: 5, bottom: 5}
     }).setOrigin(0.5, 0.5)
 
+    this.add.text(center, 270, 'Select one option below to start\n (will enter fullscreen).', {
+      fontFamily: 'Verdana',
+      fontSize: 32,
+      color: '#bbbbbb',
+      stroke: '#444444',
+      strokeThickness: 2,
+      align: 'center'
+    }).setOrigin(0.5, 0.5)
+
     let left = this.add.
-      text(center - 250, center, 'Click this side\nif using the mouse\nwith your left hand.', {
+      text(center - 250, center+100, 'Click this side\nif using the mouse\nwith your left hand.', {
         fontFamily: 'Verdana',
-        fontStyle: 'bold',
         fontSize: 32,
         color: '#dddddd',
         stroke: '#444444',
-        strokeThickness: 4,
+        strokeThickness: 2,
         align: 'center'
       }).
       setOrigin(0.5, 0.5).
@@ -104,13 +112,12 @@ export default class TitleScene extends Phaser.Scene {
         cb('left')
       })
     let right = this.add.
-      text(center + 250, center, 'Click this side\nif using the mouse\nwith your right hand.', {
+      text(center + 250, center+100, 'Click this side\nif using the mouse\nwith your right hand.', {
         fontFamily: 'Verdana',
-        fontStyle: 'bold',
         fontSize: 32,
         color: '#dddddd',
         stroke: '#444444',
-        strokeThickness: 4,
+        strokeThickness: 2,
         align: 'center'
       }).
       setOrigin(0.5, 0.5).
