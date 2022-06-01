@@ -5,16 +5,25 @@ const GREEN = 0x39ff14 // actually move to the target
 const GRAY = 0x666666
 const TARGET_SIZE_RADIUS = 30
 const NOISE_DIM = 64
-
+const UP = '↑'
+const DOWN = '↓'
 
 export default class BasicExample extends Phaser.GameObjects.Container {
   // vis cursor + target
-  constructor(scene, x, y, has_feedback = true, has_noise = true, right_key = 'D') {
+  constructor(scene, x, y, has_feedback = true, has_noise = true) {
     let target = scene.add.circle(0, -100, TARGET_SIZE_RADIUS, GRAY)
     let center = scene.add.circle(0, 100, 15, WHITE)
     let img_cur = scene.add.image(0, 100, 'cursor').setOrigin(0, 0).setScale(0.2)
-    let thed = scene.add.text(100, 0, right_key, {
+    let upp = scene.add.text(100, 0, UP, {
+      fontStyle: 'bold',
       fontFamily: 'Verdana',
+      fontSize: 70,
+      color: '#ffff00'
+    }).setAlpha(0).setOrigin(0.5, 0.5)
+
+    let downe = scene.add.text(100, 0, DOWN, {
+      fontFamily: 'Verdana',
+      fontStyle: 'bold',
       fontSize: 70,
       color: '#ffff00'
     }).setAlpha(0).setOrigin(0.5, 0.5)
@@ -30,7 +39,7 @@ export default class BasicExample extends Phaser.GameObjects.Container {
       }
     }
 
-    let stims = [target, center, cur, img_cur, thed]
+    let stims = [target, center, cur, img_cur, upp, downe]
     let noise
     if (has_noise) {
       scene.textures.generate('noise2', { data: noise_tex, pixelWidth: 3, pixelHeight: 3 })
@@ -51,7 +60,7 @@ export default class BasicExample extends Phaser.GameObjects.Container {
       stims.push(noise)
     }
     super(scene, x, y, stims)
-    let xp = 50
+    let xp = 0
     let yp = -200
     scene.add.existing(this)
     this.tl1 = scene.tweens.timeline({
@@ -59,6 +68,7 @@ export default class BasicExample extends Phaser.GameObjects.Container {
       loopDelay: 1000,
       paused: true,
       tweens: [
+        // turn the target green
         {
           targets: target,
           y: -100,
@@ -71,6 +81,7 @@ export default class BasicExample extends Phaser.GameObjects.Container {
             target.fillColor = GREEN
           }
         },
+        // then move cursor through target
         {
           offset: 800,
           targets: img_cur,
@@ -79,6 +90,8 @@ export default class BasicExample extends Phaser.GameObjects.Container {
           ease: 'Power2',
           duration: 1200
         },
+        // move this cursor through target too
+        // and dictate noise
         {
           offset: 800,
           targets: cur,
@@ -90,7 +103,7 @@ export default class BasicExample extends Phaser.GameObjects.Container {
             this.counter = 0
           },
           onUpdate: () => {
-            if (has_noise && this.counter++ > 8 && this.counter < 28) {
+            if (has_noise && this.counter++ > 8 && this.counter < 30) {
               noise.visible = false
             } else if (has_noise) {
               noise.visible = true
@@ -98,19 +111,75 @@ export default class BasicExample extends Phaser.GameObjects.Container {
           },
           onComplete: () => {
             target.fillColor = GRAY
+            this.counter = 0
+          }
+        },
+        // then show button press
+        {
+          offset: 2400,
+          targets: upp,
+          alpha: 1,
+          duration: 300,
+          yoyo: true,
+          onComplete: () => {
             cur.x = 0
             cur.y = 100
             img_cur.y = 100
             img_cur.x = 0
+          }
+        },
+        // now do non-vis (same thing, different button)
+        // turn the target green
+        {
+          offset: 3200,
+          targets: target,
+          y: -100,
+          ease: 'Linear',
+          duration: 200,
+          onStart: () => {
+            target.fillColor = GRAY
+          },
+          onComplete: () => {
+            target.fillColor = GREEN
+          }
+        },
+        // move this cursor through target too
+        // and dictate noise
+        {
+          offset: 3200 + 800,
+          targets: img_cur,
+          x: xp,
+          y: yp,
+          ease: 'Power2',
+          duration: 1200,
+          onStart: () => {
+            this.counter = 0
+          },
+          onUpdate: () => {
+            if (has_noise && this.counter++ > 8 && this.counter < 30) {
+              noise.visible = false
+            } else if (has_noise) {
+              noise.visible = true
+            }
+          },
+          onComplete: () => {
+            target.fillColor = GRAY
             this.counter = 0
           }
         },
+        // then show button press
         {
-          offset: 2400,
-          targets: thed,
+          offset: 3200 + 2400,
+          targets: downe,
           alpha: 1,
           duration: 300,
-          yoyo: true
+          yoyo: true,
+          onComplete: () => {
+            cur.x = 0
+            cur.y = 100
+            img_cur.y = 100
+            img_cur.x = 0
+          }
         }
       ]
     })

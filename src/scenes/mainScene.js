@@ -101,15 +101,7 @@ export default class MainScene extends Phaser.Scene {
     this.practice_mask_mts = [] // used for setting simulated clamp speed & max of staircase
     this.is_debug = user_config.debug
 
-    // based on mouse hand, select response keys
-    let rk
-    if (hand === 'right') {
-      // left hand for response (wasd)
-      rk = { side: { left: 'A', right: 'D' }, confidence: { guess: 'S', confident: 'W' } }
-    } else {
-      // left (ijkl)
-      rk = { side: { left: 'J', right: 'L' }, confidence: { guess: 'K', confident: 'I' } }
-    }
+    let rk = {yes: 'UP', no: 'DOWN'}
     this.resp_keys = rk
 
     // set number of repeats
@@ -140,7 +132,7 @@ export default class MainScene extends Phaser.Scene {
     let y = TARGET_DISTANCE * Math.sin(radians)
     this.target = this.add.circle(x, y, TARGET_SIZE_RADIUS, GRAY)
 
-    this.q1 = this.add.text(0, hd2 / 3, `Which side did the cursor go toward,\n left (${rk['side']['left']}) or right (${rk['side']['right']})?`, {
+    this.q1 = this.add.text(0, hd2 / 3, `Did you see the cursor,\nyes (${rk['yes']} key) or no (${rk['no']} key)?`, {
       fontFamily: 'Verdana',
       fontStyle: 'bold',
       fontSize: 40,
@@ -211,19 +203,19 @@ export default class MainScene extends Phaser.Scene {
     // examples
     this.examples = {
       // go + feedback
-      basic: new BasicExample(this, 0, 200, true, false, rk['side']['right']).setVisible(false),
-      mask: new BasicExample(this, 0, 200, true, true, rk['side']['right']).setVisible(false)
+      basic: new BasicExample(this, 0, 200, true, false).setVisible(false),
+      mask: new BasicExample(this, 0, 200, true, true).setVisible(false)
     }
 
     // question responses
     this.resp_queue = []
     this.rt_ref = 0 //
-    this.input.keyboard.on(`keydown-${rk['side']['left']}`, (evt) => {
-      this.resp_queue.push({side: 'l', rt: evt.timeStamp - this.rt_ref})
+    this.input.keyboard.on(`keydown-${rk['yes']}`, (evt) => {
+      this.resp_queue.push({detect: 1, rt: evt.timeStamp - this.rt_ref})
     })
 
-    this.input.keyboard.on(`keydown-${rk['side']['right']}`, (evt) => {
-      this.resp_queue.push({side: 'r', rt: evt.timeStamp - this.rt_ref})
+    this.input.keyboard.on(`keydown-${rk['no']}`, (evt) => {
+      this.resp_queue.push({detect: 0, rt: evt.timeStamp - this.rt_ref})
     })
 
     // start the mouse at offset
@@ -286,13 +278,13 @@ export default class MainScene extends Phaser.Scene {
     })
     // initial instructions (move straight through target)
     instruct_txts['instruct_basic'] =
-      `You will see one target.\n\nHold your mouse in the circle at the center of the screen to start a trial.\n\nWhen the target turns [color=#00ff00]green[/color], move your mouse straight through it. The target will turn [color=#777777]gray[/color] when you have moved far enough.\n\nAlways try to make [b][color=yellow]straight[/color][/b] mouse movements.\n\nAfter each reach, we will ask you a question:\n\n[size=28]Which side of the target do you think the cursor went toward, left (press the [b][color=yellow]${rk['side']['left']}[/color][/b] key), or right (press the [b][color=yellow]${rk['side']['right']}[/color][/b] key)?[/size]\n\nFor example, see below: the cursor goes to the right of the target, so we press the [b][color=yellow]${rk['side']['right']}[/color][/b] key.`
+      `You will control a circular cursor with your mouse.\n\nHold your mouse in the circle at the center of the screen to start a trial.\n\nYou will see one circular target. When the target turns [color=#00ff00]green[/color], move your mouse straight through it. The target will turn [color=#777777]gray[/color] when you have moved far enough.\n\nAlways try to make [b][color=yellow]straight[/color][/b] mouse movements.\n\nAfter each reach, we will ask you a question:\n\n[size=28]Did you see the cursor, yes ([b][color=yellow]${rk['yes']}[/color][/b] arrow key) or no ([b][color=yellow]${rk['no']}[/color][/b] arrow key)?[/size]\n\nSee the example below, where sometimes the cursor circle is visible (so [b][color=yellow]${rk['yes']}[/color][/b] is pressed), and sometimes it is not (so [b][color=yellow]${rk['no']}[/color][/b] is pressed). We show the system cursor to illustrate the mouse position, but it will never be visible when you are doing the task.`
 
     instruct_txts['instruct_mask'] =
-      'In this section, the cursor will be [color=yellow]hidden[/color] by an image at the beginning and end of the movement. The image will be temporarily removed partway through the movement, and you will be able to see the cursor then.\n\nWe will ask you to answer the same question as before:\n\nWhich side of the target do you think the cursor went toward?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
+      'In this section, the cursor will be [color=yellow]hidden[/color] by an image at the beginning and end of the movement. The image will be temporarily removed partway through the movement, and you may be able to see the cursor then.\n\nWe will ask you to answer the same question as before:\n\nDid you see the circular cursor, yes or no?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
 
     instruct_txts['instruct_probe'] =
-      'Great job! We\'ll continue these trials until the end.\n\nThe amount of time the cursor is [color=yellow]hidden[/color] may vary over time and you may need to guess sometimes, but always do your best to make [color=yellow]straight mouse movements to the target[/color] and answer the question as best you can.'
+      'Great job! We\'ll continue these trials until the end.\n\nThe amount of time the cursor [b]might[/b] be [color=yellow]hidden[/color] may vary over time and you may need to guess sometimes, but always do your best to make [color=yellow]straight mouse movements directly to the target[/color] and answer whether the cursor was visible or not.'
 
     instruct_txts['break'] = 'Take a break! Remember to make [color=yellow]straight mouse movements to the target[/color] and answer the question as best you can.'
   } // end create
@@ -307,7 +299,7 @@ export default class MainScene extends Phaser.Scene {
         if (tt === 'instruct_probe') {
           let med_mt = median(this.practice_mask_mts) // calculate median movement time across ~ 10 reaches
           // convert to frame space and round up
-          let per_ms = 1000 / this.game.user_config.refresh_rate_guess
+          let per_ms = 1000 / this.game.user_config.refresh_rate_est
           let frame_mt = Math.round(med_mt / per_ms)
           // make sure we're > 80 ms or so
           let min_frame = Math.ceil(80 / per_ms)
@@ -409,7 +401,7 @@ export default class MainScene extends Phaser.Scene {
         })
         this.target.fillColor = GREEN
         this.user_cursor.visible = current_trial.is_cursor_vis
-        let delay_frames = Math.round(this.game.user_config.refresh_rate_guess * (0.001 * current_trial.delay))
+        let delay_frames = Math.round(this.game.user_config.refresh_rate_est * (0.001 * current_trial.delay))
         let duration = 1 // only show one frame on catch, no mouse
         if (!current_trial.is_catch) {
           duration = this.staircase.next()
@@ -464,7 +456,7 @@ export default class MainScene extends Phaser.Scene {
           })
         }
       } else { // second iter ++
-        let est_dt = 1 / this.game.user_config.refresh_rate_guess * 1000
+        let est_dt = 1 / this.game.user_config.refresh_rate_est * 1000
         let this_dt = this.game.loop.now - this.last_frame_time
         this.dropped_frame_count += this_dt > 1.5 * est_dt
         this.dts.push(this_dt)
