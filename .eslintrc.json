@@ -32,7 +32,7 @@
         "eqeqeq": "warn",
         "space-infix-ops": "warn",
         "comma-spacing": "warn",
-        "brace-style": "warn",
+        "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
         "curly": "warn",
         "no-multiple-empty-lines": "warn",
         "operator-linebreak": "warn",
@@ -66,6 +66,9 @@
         "space-unary-ops": "warn",
         "spaced-comment": "warn",
         "template-curly-spacing": "warn",
-        "yoda": "warn"
+        "yoda": "warn",
+        "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
+        "object-curly-newline": ["error", { "multiline": true }],
+        "array-element-newline": ["error", "consistent"]
     }
 }

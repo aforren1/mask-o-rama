@@ -44,7 +44,7 @@ const states = Enum([
   'INSTRUCT', // show text instructions (based on stage of task)
   'PRETRIAL', // wait until in center
   'MOVING', // shoot through / mask + animation (if probe)
-  'QUESTIONS', // which side did cursor go to?
+  'QUESTIONS', // did you see the cursor?
   'POSTTRIAL', // auto teleport back to restore point
   'END' //
 ])
@@ -87,7 +87,7 @@ export default class MainScene extends Phaser.Scene {
   create() {
     let config = this.game.config
     let user_config = this.game.user_config
-    let hand = user_config.hand // 'right' or 'left'
+    // let hand = user_config.hand // 'right' or 'left'
     // camera (origin is center)
     this.cameras.main.setBounds(-config.width / 2, -config.height / 2, config.width, config.height)
     let height = config.height
@@ -163,6 +163,10 @@ export default class MainScene extends Phaser.Scene {
     let mask = this.add.polygon(0, 0, data, 0xffffff).setVisible(false).setDisplayOrigin(0, 0)
     this.noise.mask = new Phaser.Display.Masks.BitmapMask(this, mask)
 
+    // visual feedback during practice
+    this.good = this.add.image(0, 100, 'y').setOrigin(0.5, 0.5).setScale(1.2).setVisible(false)
+    this.bad = this.add.image(0, 100, 'n').setOrigin(0.5, 0.5).setScale(1.2).setVisible(false)
+
     // other warnings
     this.other_warns = this.add.
       rexBBCodeText(0, 0, '', {
@@ -211,11 +215,11 @@ export default class MainScene extends Phaser.Scene {
     this.resp_queue = []
     this.rt_ref = 0 //
     this.input.keyboard.on(`keydown-${rk['yes']}`, (evt) => {
-      this.resp_queue.push({detect: 1, rt: evt.timeStamp - this.rt_ref})
+      this.resp_queue.push({detect: true, rt: evt.timeStamp - this.rt_ref})
     })
 
     this.input.keyboard.on(`keydown-${rk['no']}`, (evt) => {
-      this.resp_queue.push({detect: 0, rt: evt.timeStamp - this.rt_ref})
+      this.resp_queue.push({detect: false, rt: evt.timeStamp - this.rt_ref})
     })
 
     // start the mouse at offset
@@ -236,55 +240,69 @@ export default class MainScene extends Phaser.Scene {
       console.log('oh no, this does not work')
     })
 
-    this.input.on('pointermove', (ptr) => {
-      let time = window.performance.now() // the time in the ptr should be a little quicker...
+    this.ptr_cb = (ptr) => {
       if (this.input.mouse.locked) {
-        // scale movement by const factor
-        let dx = ptr.movementX * MOVE_SCALE
-        let dy = ptr.movementY * MOVE_SCALE
-        // update "raw" mouse position (remember to set these back to (0, 0)
-        // when starting a new trial)
-        this.raw_x += dx
-        this.raw_y += dy
-        this.raw_x = clamp(this.raw_x, -hd2, hd2)
-        this.raw_y = clamp(this.raw_y, -hd2, hd2)
+        let is_coalesced = 'getCoalescedEvents' in ptr
+        // feature detect firefox (& ignore, see https://bugzilla.mozilla.org/show_bug.cgi?id=1753724)
+        let not_ff = 'altitudeAngle' in ptr
+        // AFAIK, Safari and IE don't support coalesced events
+        // See https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent
+        let evts = is_coalesced && not_ff ? ptr.getCoalescedEvents() : [ptr]
+        // console.log(evts.length)
+        // the timestamps of ptr and the last event should match, and the
+        // sum of all movements in evts should match ptr
+        // console.log(ptr)
+        // console.log(evts[evts.length - 1])
+        for (let evt of evts) {
+          // scale movement by const factor
+          let dx = evt.movementX * MOVE_SCALE
+          let dy = evt.movementY * MOVE_SCALE
+          // console.log(`t: ${evt.timeStamp}, dxdy: (${dx}, ${dy})`)
+          // update "raw" mouse position (remember to set these back to (0, 0)
+          // when starting a new trial)
+          this.raw_x += dx
+          this.raw_y += dy
+          this.raw_x = clamp(this.raw_x, -hd2, hd2)
+          this.raw_y = clamp(this.raw_y, -hd2, hd2)
 
-        // useful for deciding when to turn on/off visual feedback
-        let extent = Math.sqrt(Math.pow(this.raw_x, 2) + Math.pow(this.raw_y, 2))
-        // convert cursor angle to degrees
-        let cursor_angle = Phaser.Math.RadToDeg(Phaser.Math.Angle.Normalize(Math.atan2(this.raw_y, this.raw_x)))
-        let curs_x = this.raw_x
-        let curs_y = this.raw_y
-        this.dbg_cursor.setPosition(curs_x, curs_y)
+          // useful for deciding when to turn on/off visual feedback
+          let extent = Math.sqrt(Math.pow(this.raw_x, 2) + Math.pow(this.raw_y, 2))
+          // convert cursor angle to degrees
+          let cursor_angle = Phaser.Math.RadToDeg(Phaser.Math.Angle.Normalize(Math.atan2(this.raw_y, this.raw_x)))
+          let curs_x = this.raw_x
+          let curs_y = this.raw_y
+          this.dbg_cursor.setPosition(curs_x, curs_y)
 
-        this.cursor_angle = cursor_angle
-        this.user_cursor.x = curs_x
-        this.user_cursor.y = curs_y
-        this.extent = extent
+          this.cursor_angle = cursor_angle
+          this.user_cursor.x = curs_x
+          this.user_cursor.y = curs_y
+          this.extent = extent
 
-        if (this.state === states.MOVING) {
-          this.trial_data.push({
-            callback_time: time,
-            evt_time: ptr.moveTime,
-            raw_x: this.raw_x,
-            raw_y: this.raw_y,
-            cursor_x: curs_x,
-            cursor_y: curs_y,
-            cursor_extent: extent,
-            cursor_angle: cursor_angle
-          })
+          if (this.state === states.MOVING) {
+            this.trial_data.push({
+              evt_time: evt.timeStamp,
+              raw_x: this.raw_x,
+              raw_y: this.raw_y,
+              cursor_x: curs_x,
+              cursor_y: curs_y,
+              cursor_extent: extent,
+              cursor_angle: cursor_angle
+            })
+          }
         }
       }
-    })
+    }
+
+    document.addEventListener('pointermove', this.ptr_cb, {passive: true, capture: true})
     // initial instructions (move straight through target)
     instruct_txts['instruct_basic'] =
-      `You will control a circular cursor with your mouse.\n\nHold your mouse in the circle at the center of the screen to start a trial.\n\nYou will see one circular target. When the target turns [color=#00ff00]green[/color], move your mouse straight through it. The target will turn [color=#777777]gray[/color] when you have moved far enough.\n\nAlways try to make [b][color=yellow]straight[/color][/b] mouse movements.\n\nAfter each reach, we will ask you a question:\n\n[size=28]Did you see the cursor, yes ([b][color=yellow]${rk['yes']}[/color][/b] arrow key) or no ([b][color=yellow]${rk['no']}[/color][/b] arrow key)?[/size]\n\nSee the example below, where sometimes the cursor circle is visible (so [b][color=yellow]${rk['yes']}[/color][/b] is pressed), and sometimes it is not (so [b][color=yellow]${rk['no']}[/color][/b] is pressed). We show the system cursor to illustrate the mouse position, but it will never be visible when you are doing the task.`
+      `You will control a circular cursor with your mouse.\n\nHold your mouse in the circle at the center of the screen to start a trial.\n\nYou will see one circular target. When the target turns [color=#00ff00]green[/color], move your mouse [color=yellow]straight[/color] through it. The target will turn [color=#777777]gray[/color] when you have moved far enough.\n\nAlways try to make [b][color=yellow]straight mouse movements[/color][/b].\n\nAfter each reach, we will ask you a question:\n\n[size=28]Did you see the cursor, yes ([b][color=yellow]${rk['yes']}[/color][/b] arrow key) or no ([b][color=yellow]${rk['no']}[/color][/b] arrow key)?[/size]\n\nSee the example below, where sometimes the cursor circle is visible (so [b][color=yellow]${rk['yes']}[/color][/b] is pressed), and sometimes it is not (so [b][color=yellow]${rk['no']}[/color][/b] is pressed). We show the system cursor to illustrate the mouse position, but it will never be visible when you are doing the task.`
 
     instruct_txts['instruct_mask'] =
       'In this section, the cursor will be [color=yellow]hidden[/color] by an image at the beginning and end of the movement. The image will be temporarily removed partway through the movement, and you may be able to see the cursor then.\n\nWe will ask you to answer the same question as before:\n\nDid you see the circular cursor, yes or no?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
 
     instruct_txts['instruct_probe'] =
-      'Great job! We\'ll continue these trials until the end.\n\nThe amount of time the cursor [b]might[/b] be [color=yellow]hidden[/color] may vary over time and you may need to guess sometimes, but always do your best to make [color=yellow]straight mouse movements directly to the target[/color] and answer whether the cursor was visible or not.'
+      'Great job! We\'ll continue these trials until the end.\n\nThe amount of time the cursor [b]might[/b] be [color=yellow]hidden[/color] may vary over time and you may need to guess sometimes, but always do your best to make [color=yellow]straight mouse movements directly to the target[/color] and answer whether the cursor was visible or not (though we will not longer say whether you were correct or not).'
 
     instruct_txts['break'] = 'Take a break! Remember to make [color=yellow]straight mouse movements to the target[/color] and answer the question as best you can.'
   } // end create
@@ -401,7 +419,8 @@ export default class MainScene extends Phaser.Scene {
         })
         this.target.fillColor = GREEN
         this.user_cursor.visible = current_trial.is_cursor_vis
-        let delay_frames = Math.round(this.game.user_config.refresh_rate_est * (0.001 * current_trial.delay))
+        // let delay_frames = Math.round(this.game.user_config.refresh_rate_est * (0.001 * current_trial.delay))
+        let delay_frames = 0
         let duration = 1 // only show one frame on catch, no mouse
         if (!current_trial.is_catch) {
           duration = this.staircase.next()
@@ -476,7 +495,7 @@ export default class MainScene extends Phaser.Scene {
         if (current_trial.ask_questions) {
           this.state = states.QUESTIONS
         } else { // jumping straight to the posttrial, feed in some junk
-          this.resp_queue.splice(0, 0, {side: 'x', rt: 0})
+          this.resp_queue.splice(0, 0, {detect: false, rt: -1})
           this.state = states.POSTTRIAL
         }
       }
@@ -493,20 +512,17 @@ export default class MainScene extends Phaser.Scene {
         this.q1.visible = false
       }
       break
+
     case states.POSTTRIAL:
       if (this.entering) {
         this.entering = false
         let current_trial = this.current_trial
-        let correct = true
         let resp = this.resp_queue[0]
+        let correct = current_trial.is_cursor_vis === resp.detect
         let cur_stair = this.staircase.next()
         if (current_trial.is_clamped && !current_trial.is_catch && current_trial.clamp_angle !== 0) {
-          // we can know which side easily b/c it's clamped
-          // only update staircase when clamped
-          correct = current_trial.clamp_angle < 0 && resp.side === 'l' ||
-                    current_trial.clamp_angle > 0 && resp.side === 'r'
           this.staircase.update(correct)
-          // console.log(`frames: ${cur_stair}, correct: ${correct}`)
+          console.log(`frames: ${cur_stair}, correct: ${correct}`)
         }
         // deal with trial data
         let trial_data = {
@@ -590,6 +606,17 @@ export default class MainScene extends Phaser.Scene {
         combo_data['reaction_time'] = reaction_time
         combo_data['reach_time'] = reach_time
 
+        if (current_trial.show_feedback) {
+          let fdbk = this.bad
+          if (correct) {
+            fdbk = this.good
+          }
+          fdbk.visible = true
+          this.time.delayedCall(fbdelay + delay, () => {
+            fdbk.visible = false
+          })
+        }
+
         this.time.delayedCall(fbdelay, () => {
           this.time.delayedCall(delay, () => {
             combo_data['any_punishment'] = punished
@@ -617,6 +644,7 @@ export default class MainScene extends Phaser.Scene {
       if (this.entering) {
         this.entering = false
         this.input.mouse.releasePointerLock()
+        document.removeEventListener('pointermove', this.ptr_cb, {passive: true, capture: true})
         // fade out
         this.tweens.addCounter({
           from: 255,

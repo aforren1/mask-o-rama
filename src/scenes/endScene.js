@@ -91,25 +91,25 @@ export default class EndScene extends Phaser.Scene {
       })
     }
 
-    const mouse = this.add.image(height * 0.25, height * 0.25, 'mouse').setInteractive().setOrigin(0.5, 0.5)
+    const mouse = this.add.image(height * 0.3, height * 0.3, 'mouse').setInteractive().setOrigin(0.5, 0.5)
     mouse.on('pointerdown', () => {
       this.game.user_config.device = 'mouse'
       shrink(this)
       postSelection(this)
     })
-    const touchscreen = this.add.image(height * 0.25, height * 0.75, 'touchscreen').setInteractive().setOrigin(0.5, 0.5)
+    const touchscreen = this.add.image(height * 0.3, height * 0.7, 'touchscreen').setInteractive().setOrigin(0.5, 0.5)
     touchscreen.on('pointerdown', () => {
       this.game.user_config.device = 'touchscreen'
       shrink(this)
       postSelection(this)
     })
-    const trackball = this.add.image(height * 0.75, height * 0.25, 'trackball').setInteractive().setOrigin(0.5, 0.5)
+    const trackball = this.add.image(height * 0.7, height * 0.3, 'trackball').setInteractive().setOrigin(0.5, 0.5)
     trackball.on('pointerdown', () => {
       this.game.user_config.device = 'trackball'
       shrink(this)
       postSelection(this)
     })
-    const trackpad = this.add.image(height * 0.75, height * 0.75, 'trackpad').setInteractive().setOrigin(0.5, 0.5)
+    const trackpad = this.add.image(height * 0.7, height * 0.7, 'trackpad').setInteractive().setOrigin(0.5, 0.5)
     trackpad.on('pointerdown', () => {
       this.game.user_config.device = 'trackpad'
       shrink(this)

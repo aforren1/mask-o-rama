@@ -23,12 +23,39 @@ function shuffleArray(array) {
 
 export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = false, n_catch_per_10_clamp = 2) {
   let probe_trial_types = [
-    { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: CLAMP_ANGLE, delay: 0, is_cursor_vis: true, is_catch: false },
-    { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: true, clamp_angle: -CLAMP_ANGLE, delay: 0, is_cursor_vis: true, is_catch: false }
+    {
+      trial_type: 'probe',
+      ask_questions: true,
+      is_masked: true,
+      is_clamped: true,
+      clamp_angle: CLAMP_ANGLE,
+      is_cursor_vis: true,
+      is_catch: false,
+      show_feedback: false
+    },
+    {
+      trial_type: 'probe',
+      ask_questions: true,
+      is_masked: true,
+      is_clamped: true,
+      clamp_angle: -CLAMP_ANGLE,
+      is_cursor_vis: true,
+      is_catch: false,
+      show_feedback: false
+    }
   ]
 
   let catch_trial_types = [
-    { trial_type: 'probe', ask_questions: true, is_masked: true, is_clamped: false, clamp_angle: 0, delay: 0, is_cursor_vis: false, is_catch: true }
+    {
+      trial_type: 'probe',
+      ask_questions: true,
+      is_masked: true,
+      is_clamped: false,
+      clamp_angle: 0,
+      is_cursor_vis: false,
+      is_catch: true,
+      show_feedback: false
+    }
   ]
 
   let reps = is_debug ? 1 : 5
@@ -41,9 +68,9 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       is_masked: false,
       is_clamped: false,
       clamp_angle: 0,
-      delay: 0,
       is_cursor_vis: true,
-      is_catch: false
+      is_catch: false,
+      show_feedback: true
     })
     out.push({
       trial_type: 'practice_basic',
@@ -51,9 +78,9 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       is_masked: false,
       is_clamped: false,
       clamp_angle: 0,
-      delay: 0,
       is_cursor_vis: false,
-      is_catch: false
+      is_catch: false,
+      show_feedback: true
     })
   }
 
@@ -65,9 +92,9 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       is_masked: true,
       is_clamped: false,
       clamp_angle: 0,
-      delay: 0,
       is_cursor_vis: true,
-      is_catch: false
+      is_catch: false,
+      show_feedback: true
     })
     out.push({
       trial_type: 'practice_mask',
@@ -75,9 +102,9 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       is_masked: true,
       is_clamped: false,
       clamp_angle: 0,
-      delay: 0,
       is_cursor_vis: false,
-      is_catch: false
+      is_catch: false,
+      show_feedback: true
     })
   }
 

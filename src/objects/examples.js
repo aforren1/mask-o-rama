@@ -5,8 +5,8 @@ const GREEN = 0x39ff14 // actually move to the target
 const GRAY = 0x666666
 const TARGET_SIZE_RADIUS = 30
 const NOISE_DIM = 64
-const UP = '↑'
-const DOWN = '↓'
+const UP = '⇧'
+const DOWN = '⇩'
 
 export default class BasicExample extends Phaser.GameObjects.Container {
   // vis cursor + target

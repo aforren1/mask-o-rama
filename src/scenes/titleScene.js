@@ -4,23 +4,25 @@ import { median } from '../utils/medians'
 // (e.g. my lab monitor reports 74.89 Hz, not 75), so we shouldn't rely on this
 // for actual timing, only estimates (is it even worth guessing, then?)
 const common_refresh_rates = [30, 60, 72, 75, 85, 90, 100, 120, 144, 240]
+const FRAMES_TO_STORE = 400
 
 export default class TitleScene extends Phaser.Scene {
   constructor() {
     super({ key: 'TitleScene' })
   }
   preload() {
-    // load feedback images (check? x? sparks?)
     this.load.image('cursor', 'assets/cursor.png')
     this.load.image('mouse', 'assets/mouse.jpg')
     this.load.image('touchscreen', 'assets/touchscreen.jpg')
     this.load.image('trackball', 'assets/trackball.jpg')
     this.load.image('trackpad', 'assets/trackpad.jpg')
+    this.load.image('y', 'assets/check.png')
+    this.load.image('n', 'assets/x.png')
   }
   create() {
     let height = this.game.config.height
     let center = height / 2
-    this.frame_times = Array(200).fill(0) // let's guess the frame rate
+    this.frame_times = Array(FRAMES_TO_STORE).fill(0) // let's guess the frame rate
 
     this.i = 0
 
@@ -95,7 +97,7 @@ export default class TitleScene extends Phaser.Scene {
     }).setOrigin(0.5, 0.5)
 
     let left = this.add.
-      text(center - 250, center+100, 'Click this side\nif using the mouse\nwith your left hand.', {
+      text(center - 250, center + 100, 'Click this side\nif using the mouse\nwith your left hand.', {
         fontFamily: 'Verdana',
         fontSize: 32,
         color: '#dddddd',
@@ -109,7 +111,7 @@ export default class TitleScene extends Phaser.Scene {
         cb('left')
       })
     let right = this.add.
-      text(center + 250, center+100, 'Click this side\nif using the mouse\nwith your right hand.', {
+      text(center + 250, center + 100, 'Click this side\nif using the mouse\nwith your right hand.', {
         fontFamily: 'Verdana',
         fontSize: 32,
         color: '#dddddd',
@@ -131,6 +133,6 @@ export default class TitleScene extends Phaser.Scene {
     // in place on the particular browser
     this.frame_times[this.i] = this.game.loop.now
     this.i++
-    this.i %= 200
+    this.i %= FRAMES_TO_STORE
   }
 }
