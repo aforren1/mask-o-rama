@@ -1,13 +1,8 @@
 /*
 NB target distance is a constant in main
 center & target sizes are consts in main
-{
-    ask_questions: bool,
-    is_clamped: bool,
-    clamp_angle: float,
-    trial_type: str,
-    is_masked: bool, // mask duration is staircased
-}
+
+
 */
 
 /*
@@ -22,7 +17,11 @@ function shuffleArray(array) {
 }
 
 export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = false, n_catch_per_10_clamp = 2) {
+  // in v5, we want to do an even number of detect/not
+  // for catch trials, should it be
+  // 1. max duration, veridical and/or 0 clamp?
   let probe_trial_types = [
+    // visible, both clamp angles
     {
       trial_type: 'probe',
       ask_questions: true,
@@ -40,6 +39,27 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       is_clamped: true,
       clamp_angle: -CLAMP_ANGLE,
       is_cursor_vis: true,
+      is_catch: false,
+      show_feedback: false
+    },
+    // not visible
+    {
+      trial_type: 'probe',
+      ask_questions: true,
+      is_masked: true,
+      is_clamped: true,
+      clamp_angle: 0,
+      is_cursor_vis: false,
+      is_catch: false,
+      show_feedback: false
+    },
+    {
+      trial_type: 'probe',
+      ask_questions: true,
+      is_masked: true,
+      is_clamped: true,
+      clamp_angle: 0,
+      is_cursor_vis: false,
       is_catch: false,
       show_feedback: false
     }

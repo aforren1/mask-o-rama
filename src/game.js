@@ -3,6 +3,7 @@ import TitleScene from './scenes/titleScene'
 import MainScene from './scenes/mainScene'
 import EndScene from './scenes/endScene'
 import UAParser from 'ua-parser-js'
+import createPsydapt from 'psydapt/dist/psydapt-qp_normcdf-es6'
 
 import BBCodeTextPlugin from 'phaser3-rex-plugins/plugins/bbcodetext-plugin.js'
 import TextTypingPlugin from 'phaser3-rex-plugins/plugins/texttyping-plugin.js'
@@ -18,9 +19,7 @@ const phaser_config = {
     width: small_dim,
     height: small_dim
   },
-  audio: {
-    noAudio: true
-  },
+  audio: {noAudio: true},
   scene: [TitleScene, MainScene, EndScene],
   plugins: {
     global: [
@@ -38,8 +37,10 @@ const phaser_config = {
   }
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async() => {
   const game = new Phaser.Game(phaser_config)
+  game.psydapt = await createPsydapt()
+  console.log(game.psydapt)
   // TODO: figure out prolific/mturk/elsewhere here (URL parsing)
   // Remember that localStorage *only stores strings*
   const url_params = new URL(window.location.href).searchParams

@@ -21,6 +21,7 @@
         "eslint": "^8.16.0",
         "phaser": "aforren1/phaser#1665b3f",
         "phaser3-rex-plugins": "^1.1.69",
+        "psydapt": "0.1.8",
         "ua-parser-js": "^1.0.2"
     },
     "dependencies": {

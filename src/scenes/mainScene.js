@@ -107,7 +107,7 @@ export default class MainScene extends Phaser.Scene {
     // set number of repeats
     if (this.is_debug) {
       this.trials = generateTrials(5, user_config.clamp_size, true, 2)
-      this.typing_speed = 1
+      this.typing_speed = 0
     } else {
       // 50 repeats = 100 trials in probe section
       this.trials = generateTrials(50, user_config.clamp_size, false, 2)
@@ -184,7 +184,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.instructions = TypingText(this, /* half width */-400, -hd2 + 50, '', {
       fontFamily: 'Verdana',
-      fontSize: 22,
+      fontSize: 20,
       wrap: {
         mode: 'word',
         width: 800
@@ -296,7 +296,7 @@ export default class MainScene extends Phaser.Scene {
     document.addEventListener('pointermove', this.ptr_cb, {passive: true, capture: true})
     // initial instructions (move straight through target)
     instruct_txts['instruct_basic'] =
-      `You will control a circular cursor with your mouse, but sometimes that cursor will be [color=yellow]invisible[/color].\n\nHold your mouse in the circle at the center of the screen to start a trial.\n\nYou will see one circular target. When the target turns [color=#00ff00]green[/color], move your mouse [color=yellow]straight[/color] through it. The target will turn [color=#777777]gray[/color] when you have moved far enough.\n\nAlways try to make [b][color=yellow]straight mouse movements[/color][/b].\n\nAfter each reach, we will ask you a question:\n\nDid you see the cursor, yes ([b][color=yellow]${rk['yes']}[/color][/b] arrow key) or no ([b][color=yellow]${rk['no']}[/color][/b] arrow key)?\n\nSee the example below, where sometimes the cursor circle is visible (so [b][color=yellow]${rk['yes']}[/color][/b] is pressed), and sometimes it is not (so [b][color=yellow]${rk['no']}[/color][/b] is pressed). We show the system cursor to illustrate the mouse position, but it will never be visible when you are doing the task.`
+      `You will control a circular cursor with your mouse, and sometimes that cursor will be [color=yellow]invisible[/color].\n\nHold that cursor in the circle at the center of the screen to start a trial.\n\nYou will see one [color=#777777]gray[/color] target at the top of the screen. When the target turns [color=#00ff00]green[/color], move your mouse [color=yellow]straight[/color] through it. The target will turn back to [color=#777777]gray[/color] when you have moved far enough.\n\nAlways try to make [b][color=yellow]straight mouse movements[/color][/b].\n\nAfter each reach, we will ask you a question:\n\nDid you see the cursor, yes ([b][color=yellow]${rk['yes']}[/color][/b] arrow key) or no ([b][color=yellow]${rk['no']}[/color][/b] arrow key)?\n\nSee the example below, where sometimes the cursor circle is visible (so [b][color=yellow]${rk['yes']}[/color][/b] is pressed), and sometimes it is not (so [b][color=yellow]${rk['no']}[/color][/b] is pressed). We show the system cursor to illustrate the mouse position, but it will never be visible when you are doing the task.`
 
     instruct_txts['instruct_mask'] =
       'In this section, the cursor will be [color=yellow]hidden[/color] by an image at the beginning and end of the movement. The image will be temporarily removed partway through the movement, and you may be able to see the cursor then.\n\nWe will ask you to answer the same question as before:\n\nDid you see the circular cursor, yes or no?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
