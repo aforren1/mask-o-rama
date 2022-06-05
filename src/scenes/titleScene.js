@@ -1,5 +1,4 @@
 import { median } from '../utils/medians'
-import createPsydapt from 'psydapt/dist/psydapt-qp_normcdf-es6'
 
 // Do note that this ignores valid fractional refresh rates
 // (e.g. my lab monitor reports 74.89 Hz, not 75), so we shouldn't rely on this
