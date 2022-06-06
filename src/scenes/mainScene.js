@@ -723,8 +723,8 @@ export default class MainScene extends Phaser.Scene {
       intensity: frame_vals,
       location: frame_vals,
       scale: [1, 2, 3, 4], // guessed (anything lower is tough to estimate, anything higher is effectively flat?)
-      lower_asymptote: [0.4, 0.5, 0.6], // arbitrary, to make it explore the lower bounds
-      lapse_rate: [0.05] // we don't need to explore this, really
+      lower_asymptote: [0.25, 0.5, 0.75], // arbitrary, to make it explore the lower bounds
+      lapse_rate: [0.1, 0.05, 0.1] // we don't need to explore this, really
     })
   }
 }
