@@ -711,9 +711,9 @@ export default class MainScene extends Phaser.Scene {
   }
 
   setup_adaptive() {
-    console.log('entering adaptive setup...')
+    // console.log('entering adaptive setup...')
     let frame_vals = new Array(MAX_STAIRCASE).fill(1).map((_, i) => i + 1) // 1 to MAX_STAIRCASE
-    console.log(frame_vals)
+    // console.log(frame_vals)
     let qp = this.game.psydapt.questplus
     if (this.adapt) {
       this.adapt.delete()
@@ -721,9 +721,9 @@ export default class MainScene extends Phaser.Scene {
     this.adapt = new qp.NormCDF({
       intensity: frame_vals,
       location: frame_vals,
-      scale: [1, 2, 3, 4], // guessed
+      scale: [1, 2, 3, 4], // guessed (anything lower is tough to estimate, anything higher is effectively flat?)
       lower_asymptote: [0.4, 0.5, 0.6], // arbitrary, to make it explore the lower bounds
-      lapse_rate: [0.05]
+      lapse_rate: [0.05] // we don't need to explore this, really
     })
   }
 }
