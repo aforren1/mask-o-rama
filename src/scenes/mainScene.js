@@ -410,7 +410,6 @@ export default class MainScene extends Phaser.Scene {
         this.dts = []
         // every trial starts at 0, 0
         this.trial_data.splice(0, 0, {
-          callback_time: this.reference_time,
           evt_time: this.reference_time,
           raw_x: 0,
           raw_y: 0,
@@ -530,7 +529,9 @@ export default class MainScene extends Phaser.Scene {
         // if (current_trial.is_clamped && !current_trial.is_catch && current_trial.clamp_angle !== 0) {
         if (current_trial.trial_type === 'probe') {
           this.adapt.update(correct)
-          console.log(`frames: ${cur_stair}, correct: ${correct}`)
+          if (DEBUG || this.is_debug) {
+            console.log(`frames: ${cur_stair}, correct: ${correct}`)
+          }
         }
         // deal with trial data
         let trial_data = {
