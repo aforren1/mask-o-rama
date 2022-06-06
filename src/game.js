@@ -40,7 +40,7 @@ const phaser_config = {
 window.addEventListener('load', async() => {
   const game = new Phaser.Game(phaser_config)
   game.psydapt = await createPsydapt()
-  console.log(game.psydapt)
+  // console.log(game.psydapt)
   // TODO: figure out prolific/mturk/elsewhere here (URL parsing)
   // Remember that localStorage *only stores strings*
   const url_params = new URL(window.location.href).searchParams

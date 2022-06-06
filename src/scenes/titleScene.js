@@ -29,7 +29,7 @@ export default class TitleScene extends Phaser.Scene {
     let cb = (side) => {
       left.disableInteractive()
       right.disableInteractive()
-      this.scale.startFullscreen()
+      !DEBUG && this.scale.startFullscreen()
       this.tweens.addCounter({
         from: 255,
         to: 0,
@@ -42,13 +42,16 @@ export default class TitleScene extends Phaser.Scene {
           // grab frame times now, so we'll have at least ~2.5 sec of data
           let dts = this.frame_times.map((ele, idx, arr) => ele - arr[idx - 1]).slice(1)
           let est_rate = 1000 / median(dts)
+          let refresh_success = true
           if (!isFinite(est_rate)) {
             console.warn('Not enough time to guess a refresh rate, defaulting to 60 Hz.')
             est_rate = 60
+            refresh_success = false
           }
           console.log(`median: ${est_rate}`)
           this.game.user_config['hand'] = side
           this.game.user_config['refresh_rate_est'] = est_rate
+          this.game.user_config['refresh_rate_measured'] = refresh_success
           // TODO: https://docs.google.com/document/d/17pvFMFqtAIx0ZA6zMZRU_A2-VnjhNX9QlN1Cgy-3Wdg/edit
           this.input.mouse.requestPointerLock()
           let battery_config = {

@@ -106,18 +106,18 @@ export default class MainScene extends Phaser.Scene {
 
     // set number of repeats
     if (this.is_debug) {
-      this.trials = generateTrials(5, user_config.clamp_size, true, 2)
-      this.typing_speed = 0
+      this.trials = generateTrials(4, user_config.clamp_size, true, 2)
+      this.typing_speed = 1
     } else {
       // 50 repeats = 100 trials in probe section
-      this.trials = generateTrials(50, user_config.clamp_size, false, 2)
+      this.trials = generateTrials(48, user_config.clamp_size, false, 2)
       this.typing_speed = 50
     }
     // min of 1 frame, max of 10 frames (probably 166ms on 60hz machines?), steps of 1 frame
     // 1 up, 2 down (i.e. 2 correct to move a step down, 1 incorrect to move a step up)
     // this ends up getting overwritten once we've computed the per-user movement time
-    this.staircase = new Staircase(1, MAX_STAIRCASE, 1, 2)
-
+    // this.staircase = new Staircase(1, MAX_STAIRCASE, 1, 2)
+    this.setup_adaptive()
     // user cursor
     this.user_cursor = this.add.circle(CURSOR_RESTORE_POINT, CURSOR_RESTORE_POINT, CURSOR_SIZE_RADIUS, LIGHTBLUE) // controlled by user (gray to reduce contrast)
     this.fake_cursor = this.add.circle(0, 0, CURSOR_SIZE_RADIUS, LIGHTBLUE).setVisible(false) // animated by program
@@ -230,7 +230,7 @@ export default class MainScene extends Phaser.Scene {
     // set up mouse callback (does all the heavy lifting)
     this.input.on('pointerdown', () => {
       if (this.state !== states.END) {
-        this.scale.startFullscreen()
+        !DEBUG && this.scale.startFullscreen()
         this.time.delayedCall(300, () => {
           this.input.mouse.requestPointerLock()
         })
@@ -244,6 +244,7 @@ export default class MainScene extends Phaser.Scene {
       if (this.input.mouse.locked) {
         let is_coalesced = 'getCoalescedEvents' in ptr
         // feature detect firefox (& ignore, see https://bugzilla.mozilla.org/show_bug.cgi?id=1753724)
+        // TODO: detect first input & use as reference position for FF
         let not_ff = 'altitudeAngle' in ptr
         // AFAIK, Safari and IE don't support coalesced events
         // See https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent
@@ -328,8 +329,9 @@ export default class MainScene extends Phaser.Scene {
           this.game.user_config['used_mt'] = frame_mt
           console.log(`Using ${frame_mt}.`)
           // set up new staircase
-          this.staircase = new Staircase(1, frame_mt, 1, 2)
+          // this.staircase = new Staircase(1, frame_mt, 1, 2)
           MAX_STAIRCASE = frame_mt
+          this.setup_adaptive()
         }
 
         // show the right instruction text, wait until typing complete
@@ -422,9 +424,14 @@ export default class MainScene extends Phaser.Scene {
         // let delay_frames = Math.round(this.game.user_config.refresh_rate_est * (0.001 * current_trial.delay))
         let delay_frames = 0
         let duration = 1 // only show one frame on catch, no mouse
-        if (!current_trial.is_catch) {
-          duration = this.staircase.next()
+        // if (!current_trial.is_catch) {
+        // run the staircase on catch trials too, to get something closer
+        if (current_trial.trial_type === 'probe') {
+          duration = this.adapt.next()
+        } else {
+          duration = MAX_STAIRCASE
         }
+
         if (current_trial.is_masked) {
           this.mask_twn = this.tweens.add({
             targets: this.noise,
@@ -519,9 +526,10 @@ export default class MainScene extends Phaser.Scene {
         let current_trial = this.current_trial
         let resp = this.resp_queue[0]
         let correct = current_trial.is_cursor_vis === resp.detect
-        let cur_stair = this.staircase.next()
-        if (current_trial.is_clamped && !current_trial.is_catch && current_trial.clamp_angle !== 0) {
-          this.staircase.update(correct)
+        let cur_stair = this.adapt.next()
+        // if (current_trial.is_clamped && !current_trial.is_catch && current_trial.clamp_angle !== 0) {
+        if (current_trial.trial_type === 'probe') {
+          this.adapt.update(correct)
           console.log(`frames: ${cur_stair}, correct: ${correct}`)
         }
         // deal with trial data
@@ -644,6 +652,7 @@ export default class MainScene extends Phaser.Scene {
       if (this.entering) {
         this.entering = false
         this.input.mouse.releasePointerLock()
+        this.adapt.delete()
         document.removeEventListener('pointermove', this.ptr_cb, {passive: true, capture: true})
         // fade out
         this.tweens.addCounter({
@@ -699,5 +708,22 @@ export default class MainScene extends Phaser.Scene {
       // undefine
       console.error('Oh no, wrong next_trial.')
     }
+  }
+
+  setup_adaptive() {
+    console.log('entering adaptive setup...')
+    let frame_vals = new Array(MAX_STAIRCASE).fill(1).map((_, i) => i + 1) // 1 to MAX_STAIRCASE
+    console.log(frame_vals)
+    let qp = this.game.psydapt.questplus
+    if (this.adapt) {
+      this.adapt.delete()
+    }
+    this.adapt = new qp.NormCDF({
+      intensity: frame_vals,
+      location: frame_vals,
+      scale: [1, 2, 3, 4], // guessed
+      lower_asymptote: [0.4, 0.5, 0.6], // arbitrary, to make it explore the lower bounds
+      lapse_rate: [0.05]
+    })
   }
 }
