@@ -527,7 +527,10 @@ export default class MainScene extends Phaser.Scene {
         let correct = current_trial.is_cursor_vis === resp.detect
         let cur_stair = this.adapt.next()
         // if (current_trial.is_clamped && !current_trial.is_catch && current_trial.clamp_angle !== 0) {
-        if (current_trial.trial_type === 'probe') {
+        if (current_trial.trial_type === 'probe'/* && !current_trial.is_catch */) {
+          // when staircasing on correct, lower bound should be ~ 0.2 (assuming they always
+          // respond with 0 when unable to detect, and our current rate of 20% catch trials)
+          // might get pulled up a bit due to prior expectation of 50/50?
           this.adapt.update(correct)
           if (DEBUG || this.is_debug) {
             console.log(`frames: ${cur_stair}, correct: ${correct}`)
@@ -542,7 +545,7 @@ export default class MainScene extends Phaser.Scene {
           cursor_size_radius: CURSOR_SIZE_RADIUS,
           iti: this.inter_trial_interval, // amount of time between cursor appear & teleport
           hold_time: this.hold_val,
-          which_side: resp,
+          detect: resp,
           n_frames: cur_stair, // get current stair value
           correct: correct,
           dropped_frame_count: this.dropped_frame_count
@@ -723,7 +726,7 @@ export default class MainScene extends Phaser.Scene {
       intensity: frame_vals,
       location: frame_vals,
       scale: [1, 2, 3, 4], // guessed (anything lower is tough to estimate, anything higher is effectively flat?)
-      lower_asymptote: [0.25, 0.5, 0.75], // arbitrary, to make it explore the lower bounds
+      lower_asymptote: [0, 0.1, 0.2, 0.3, 0.4, 0.5], // arbitrary, to make it explore the lower bounds
       lapse_rate: [0.1, 0.05, 0.1] // we don't need to explore this, really
     })
   }
