@@ -16,7 +16,7 @@ function shuffleArray(array) {
   }
 }
 
-export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = false, n_catch_per_10_clamp = 2) {
+export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = false, n_catch_per_10_clamp = 0) {
   // in v5, we want to do an even number of detect/not
   // for catch trials, should it be
   // 1. max duration, veridical and/or 0 clamp?
@@ -119,7 +119,7 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
   // generate 8 trials to use as prototype
   let proto = Array(4).fill(probe_trial_types).flat()
   // append catch trials (no cursor visible)
-  proto.push(...Array(n_catch_per_10_clamp).fill(catch_trial_types).flat())
+  // proto.push(...Array(n_catch_per_10_clamp).fill(catch_trial_types).flat())
   for (let i = 0; i < n_trials / 8; i++) {
     // we used to have fancy
     shuffleArray(proto)
@@ -127,10 +127,10 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
     for (let j = 0; j < proto.length; j++) {
       out.push(proto[j])
     }
-    if (i > 0 && i % 4 === 0) {
+    if (i > 0 && i % 8 === 0) {
       out.push({trial_type: 'break'})
     }
   }
-  // console.log(out)
+  console.log(out)
   return out
 }
