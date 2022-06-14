@@ -303,7 +303,7 @@ export default class MainScene extends Phaser.Scene {
       'In this section, the cursor will be [color=yellow]hidden[/color] by an image at the beginning and end of the movement. The image will be temporarily removed partway through the movement, and you may be able to see the cursor then.\n\nWe will ask you to answer the same question as before:\n\nDid you see the circular cursor, yes or no?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
 
     instruct_txts['instruct_probe'] =
-      'Great job! We\'ll continue these trials until the end.\n\nThe amount of time the cursor [b]might[/b] be [color=yellow]hidden[/color] may vary over time and you may need to guess sometimes, but always do your best to make [color=yellow]straight mouse movements directly to the target[/color] and answer whether the cursor was visible or not (though we will not longer say whether you were correct or not).'
+      'Great job! We\'ll continue these trials until the end.\n\nThe amount of time the cursor [b]might[/b] be [color=yellow]hidden[/color] may vary over time and you may need to guess sometimes, but always do your best to make [color=yellow]straight mouse movements directly to the target[/color] and answer whether the cursor was visible or not (though we will no longer say whether you were correct or not).'
 
     instruct_txts['break'] = 'Take a break! Remember to make [color=yellow]straight mouse movements to the target[/color] and answer the question as best you can.'
   } // end create
