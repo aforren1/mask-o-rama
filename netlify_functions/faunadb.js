@@ -5,7 +5,7 @@ const q = faunadb.query
 exports.handler = async(event) => {
   // create client w/ secret
   const client = new faunadb.Client({
-    secret: process.env.FAUNADB_SERVER_SECRET_V5,
+    secret: process.env.FAUNADB_SERVER_SECRET_V6,
     domain: 'db.us.fauna.com',
     scheme: 'https'
   })

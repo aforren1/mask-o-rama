@@ -7,7 +7,7 @@ import signedAngleDeg from '../utils/angulardist'
 import { mad, median } from '../utils/medians'
 import generateTrials from '../utils/trialgen'
 import make_thick_arc from '../utils/arc'
-import { Staircase } from '../utils/staircase'
+// import { Staircase } from '../utils/staircase'
 
 const WHITE = 0xffffff
 const GREEN = 0x39ff14 // actually move to the target
@@ -110,7 +110,7 @@ export default class MainScene extends Phaser.Scene {
       this.typing_speed = 1
     } else {
       // 50 repeats = 100 trials in probe section
-      this.trials = generateTrials(48, user_config.clamp_size, false, 2)
+      this.trials = generateTrials(96, user_config.clamp_size, false, 2)
       this.typing_speed = 50
     }
     // min of 1 frame, max of 10 frames (probably 166ms on 60hz machines?), steps of 1 frame
@@ -727,7 +727,7 @@ export default class MainScene extends Phaser.Scene {
       location: frame_vals,
       scale: [1, 2, 3, 4], // guessed (anything lower is tough to estimate, anything higher is effectively flat?)
       lower_asymptote: [0, 0.1, 0.2, 0.3, 0.4, 0.5], // arbitrary, to make it explore the lower bounds
-      lapse_rate: [0.1, 0.05, 0.1] // we don't need to explore this, really
+      lapse_rate: [0, 0.05, 0.1, 0.15, 0.2] // we don't need to explore this, really
     })
   }
 }

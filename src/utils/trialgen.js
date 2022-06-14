@@ -127,7 +127,7 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
     for (let j = 0; j < proto.length; j++) {
       out.push(proto[j])
     }
-    if (i === 4) {
+    if (i > 0 && i % 4 === 0) {
       out.push({trial_type: 'break'})
     }
   }
