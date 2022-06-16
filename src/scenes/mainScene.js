@@ -109,8 +109,8 @@ export default class MainScene extends Phaser.Scene {
       this.trials = generateTrials(4, user_config.clamp_size, true, 2)
       this.typing_speed = 1
     } else {
-      // 50 repeats = 100 trials in probe section
-      this.trials = generateTrials(96, user_config.clamp_size, false, 2)
+      // 80 repeats = 160 trials in probe section
+      this.trials = generateTrials(80, user_config.clamp_size, false, 2)
       this.typing_speed = 50
     }
     // min of 1 frame, max of 10 frames (probably 166ms on 60hz machines?), steps of 1 frame
@@ -321,7 +321,7 @@ export default class MainScene extends Phaser.Scene {
           let per_ms = 1000 / this.game.user_config.refresh_rate_est
           let frame_mt = Math.round(med_mt / per_ms)
           // make sure we're > 80 ms or so
-          let min_frame = Math.ceil(80 / per_ms)
+          let min_frame = Math.ceil(100 / per_ms)
           let max_frame = Math.floor(200 / per_ms)
           console.log(`New max frame est: ${frame_mt} (min is ${min_frame}, max is ${max_frame})`)
           this.game.user_config['est_mt'] = frame_mt
