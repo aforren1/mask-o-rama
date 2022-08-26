@@ -1,6 +1,7 @@
 //
 import make_thick_arc from '../utils/arc'
 const WHITE = 0xffffff
+const LIGHTBLUE = 0x86c5da
 const GREEN = 0x39ff14 // actually move to the target
 const GRAY = 0x666666
 const TARGET_SIZE_RADIUS = 30
@@ -12,7 +13,9 @@ export default class BasicExample extends Phaser.GameObjects.Container {
   // vis cursor + target
   constructor(scene, x, y, has_feedback = true, has_noise = true) {
     let target = scene.add.circle(0, -100, TARGET_SIZE_RADIUS, GRAY)
+    let cur = scene.add.circle(0, 100, 10, LIGHTBLUE, has_feedback)
     let center = scene.add.circle(0, 100, 15, WHITE)
+
     let img_cur = scene.add.image(0, 100, 'cursor').setOrigin(0, 0).setScale(0.2)
     let upp = scene.add.text(100, 0, UP, {
       fontStyle: 'bold',
@@ -28,7 +31,6 @@ export default class BasicExample extends Phaser.GameObjects.Container {
       color: '#ffff00'
     }).setAlpha(0).setOrigin(0.5, 0.5)
 
-    let cur = scene.add.circle(0, 100, 10, WHITE, has_feedback)
     // noise arc
     let noise_tex = []
     let tmp = ['0', '2'] // 0 = black, 2 = white for the arne16 palette
@@ -39,7 +41,7 @@ export default class BasicExample extends Phaser.GameObjects.Container {
       }
     }
 
-    let stims = [target, center, cur, img_cur, upp, downe]
+    let stims = [target, cur, center, img_cur, upp, downe]
     let noise
     if (has_noise) {
       scene.textures.generate('noise2', { data: noise_tex, pixelWidth: 3, pixelHeight: 3 })

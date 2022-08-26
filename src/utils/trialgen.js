@@ -30,7 +30,9 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       clamp_angle: CLAMP_ANGLE,
       is_cursor_vis: true,
       is_catch: false,
-      show_feedback: false
+      show_feedback: false,
+      is_sided: true,
+      side: 'left'
     },
     {
       trial_type: 'probe',
@@ -40,21 +42,33 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       clamp_angle: -CLAMP_ANGLE,
       is_cursor_vis: true,
       is_catch: false,
-      show_feedback: false
-    }
-  ]
-
-  // in v5, also included in staircase
-  let catch_trial_types = [
+      show_feedback: false,
+      is_sided: true,
+      side: 'left'
+    },
     {
       trial_type: 'probe',
       ask_questions: true,
       is_masked: true,
-      is_clamped: false,
-      clamp_angle: 0,
-      is_cursor_vis: false,
-      is_catch: true,
-      show_feedback: false
+      is_clamped: true,
+      clamp_angle: CLAMP_ANGLE,
+      is_cursor_vis: true,
+      is_catch: false,
+      show_feedback: false,
+      is_sided: true,
+      side: 'right'
+    },
+    {
+      trial_type: 'probe',
+      ask_questions: true,
+      is_masked: true,
+      is_clamped: true,
+      clamp_angle: -CLAMP_ANGLE,
+      is_cursor_vis: true,
+      is_catch: false,
+      show_feedback: false,
+      is_sided: true,
+      side: 'right'
     }
   ]
 
@@ -70,7 +84,8 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       clamp_angle: 0,
       is_cursor_vis: true,
       is_catch: false,
-      show_feedback: true
+      show_feedback: true,
+      is_sided: false
     })
     out.push({
       trial_type: 'practice_basic',
@@ -80,7 +95,8 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       clamp_angle: 0,
       is_cursor_vis: false,
       is_catch: false,
-      show_feedback: true
+      show_feedback: true,
+      is_sided: false
     })
   }
 
@@ -94,7 +110,8 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       clamp_angle: 0,
       is_cursor_vis: true,
       is_catch: false,
-      show_feedback: true
+      show_feedback: true,
+      is_sided: false
     })
     out.push({
       trial_type: 'practice_mask',
@@ -104,7 +121,36 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       clamp_angle: 0,
       is_cursor_vis: false,
       is_catch: false,
-      show_feedback: true
+      show_feedback: true,
+      is_sided: false
+    })
+  }
+
+  out.push({ trial_type: 'instruct_side'})
+  for (let i = 0; i < reps; i++) {
+    out.push({
+      trial_type: 'practice_side',
+      ask_questions: true,
+      is_masked: true,
+      is_clamped: false,
+      clamp_angle: 0,
+      is_cursor_vis: true,
+      is_catch: false,
+      show_feedback: true,
+      is_sided: true,
+      side: 'left'
+    })
+    out.push({
+      trial_type: 'practice_side',
+      ask_questions: true,
+      is_masked: true,
+      is_clamped: false,
+      clamp_angle: 0,
+      is_cursor_vis: false,
+      is_catch: false,
+      show_feedback: true,
+      is_sided: true,
+      side: 'right'
     })
   }
 
@@ -117,7 +163,7 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
     console.error(`Repeats was ${repeats}, n_trials was ${n_trials}`)
   }
   // generate 8 trials to use as prototype
-  let proto = Array(4).fill(probe_trial_types).flat()
+  let proto = Array(2).fill(probe_trial_types).flat()
   // append catch trials (no cursor visible)
   // proto.push(...Array(n_catch_per_10_clamp).fill(catch_trial_types).flat())
   for (let i = 0; i < n_trials / 8; i++) {
