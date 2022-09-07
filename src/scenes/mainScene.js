@@ -337,7 +337,7 @@ export default class MainScene extends Phaser.Scene {
     instruct_txts['instruct_mask'] =
       'In this section, the cursor will be [color=yellow]hidden[/color] by an image at the beginning and end of the movement. The image will be temporarily removed partway through the movement, and you may be able to see the cursor then.\n\nWe will ask you the same question as before:\n\nDid you see the circular cursor, yes or no?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
 
-    instruct_txts['instruct_side'] = 'In this section, we will layer one more task on.\n\nImmediately after the movement, you will see a white [color=yellow]star[/color] either toward the [color=yellow]left[/color] or the [color=yellow]right[/color], relative to the midline of the screen.\n\nWe will ask you to judge whether the star was on the left or right, using the [color=yellow]left[/color] and [color=yellow]right[/color] arrow keys.\n\nWe will ask you the same question as before:\n\nDid you see the circular cursor, yes or no?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
+    instruct_txts['instruct_side'] = 'In this section, we will layer one more task on.\n\nImmediately after the movement, you will see a white [color=yellow]star[/color] either toward the [color=yellow]left[/color] or the [color=yellow]right[/color], relative to the midline of the screen.\n\nWe will ask you to judge whether the star was on the left or right, using the [color=yellow]left[/color] and [color=yellow]right[/color] arrow keys.\n\nWe will then ask you the same question as before:\n\nDid you see the circular cursor, yes or no?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
 
     instruct_txts['instruct_probe'] =
       'Great job! We\'ll continue these trials until the end.\n\nThe amount of time the cursor [b]might[/b] be [color=yellow]hidden[/color] may vary over time and you may need to guess sometimes, but always do your best to make [color=yellow]straight mouse movements directly to the target[/color] and answer which side you saw the white [color=yellow]star[/color] on, and whether the cursor was visible or not (though we will no longer say whether you were correct or not).'
@@ -556,16 +556,22 @@ export default class MainScene extends Phaser.Scene {
 
       if (this.entering) {
         this.entering = false
-        let side_offset = current_trial.side === 'left' ? -50 : 50
+        console.log(current_trial.side)
+        let sgn = current_trial.side === 'left' ? -1 : 1
+        let clampangle = current_trial.clamp_angle !== 0 ? current_trial.clamp_angle : 15
+        let rad = Phaser.Math.DegToRad(sgn * clampangle + TARGET_REF_ANGLE)
+        let x = TARGET_DISTANCE * 0.5 * Math.cos(rad)
+        let y = TARGET_DISTANCE * 0.5 * Math.sin(rad)
         this.side_rt_ref = this.game.loop.now
         this.side_queue = []
         this.side_question.visible = true
         this.star.alpha = 1
-        this.star.x = side_offset
+        this.star.x = x
+        this.star.y = y
         this.tweens.add({
           targets: this.star,
           duration: 80, // probably not exactly 80-- how important is preciseness here?
-          x: side_offset - 0.1,
+          x: x - 0.1,
           onComplete: () => {
             this.star.alpha = 0
           }
