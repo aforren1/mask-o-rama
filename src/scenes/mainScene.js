@@ -111,11 +111,11 @@ export default class MainScene extends Phaser.Scene {
 
     // set number of repeats
     if (this.is_debug) {
-      this.trials = generateTrials(4, user_config.clamp_size, true, 0)
+      this.trials = generateTrials(2, user_config.clamp_size, true, 0)
       this.typing_speed = 1
     } else {
       // 80 repeats = 160 trials in probe section
-      this.trials = generateTrials(80, user_config.clamp_size, false, 0)
+      this.trials = generateTrials(40, user_config.clamp_size, false, 0)
       this.typing_speed = 50
     }
     // min of 1 frame, max of 10 frames (probably 166ms on 60hz machines?), steps of 1 frame
@@ -576,7 +576,7 @@ export default class MainScene extends Phaser.Scene {
 
       if (this.entering) {
         this.entering = false
-        console.log(current_trial.side)
+        // console.log(current_trial.side)
         let sgn = current_trial.side === 'left' ? -1 : 1
         let clampangle = current_trial.clamp_angle !== 0 ? current_trial.clamp_angle : 15
         let rad = Phaser.Math.DegToRad(sgn * clampangle + TARGET_REF_ANGLE)
@@ -672,7 +672,7 @@ export default class MainScene extends Phaser.Scene {
           dropped_frame_count: this.dropped_frame_count
         }
         let combo_data = merge_data(current_trial, trial_data)
-        console.log(combo_data)
+        // console.log(combo_data)
         let delay = 1200
         let fbdelay = 0
         // feedback about movement angle (if non-imagery)
