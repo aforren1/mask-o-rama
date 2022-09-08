@@ -90,7 +90,7 @@ export default class TitleScene extends Phaser.Scene {
       padding: {left: 5, right: 5, top: 5, bottom: 5}
     }).setOrigin(0.5, 0.5)
 
-    this.add.text(center, 230, 'You will be using the mouse and\nkeyboard (nearly) simultaneously.\n\nYou can either use the arrow keys\nor WASD keys to indicate direction.\n\nPlease select the most comfortable option below to start\n (will enter fullscreen).', {
+    this.add.text(center, 230, 'You will be using your mouse and\nkeyboard (nearly) simultaneously in this task.\n\nYou will need to indicate direction using the keyboard,\nand can either use the arrow keys or WASD keys.\n\nPlease select the most comfortable option below to start\n (will enter fullscreen after selection).', {
       fontFamily: 'Verdana',
       fontSize: 32,
       color: '#bbbbbb',
@@ -100,7 +100,7 @@ export default class TitleScene extends Phaser.Scene {
     }).setOrigin(0.5, 0.5)
 
     let left = this.add.
-      text(center - 250, center + 100, 'Click this side\nif you want to use\nthe WASD keys.', {
+      text(center - 250, center + 100, 'Click this side\nif you want to use\nthe WASD keys\nto indicate direction.', {
         fontFamily: 'Verdana',
         fontSize: 32,
         color: '#dddddd',
@@ -114,7 +114,7 @@ export default class TitleScene extends Phaser.Scene {
         cb('wasd')
       })
     let right = this.add.
-      text(center + 250, center + 100, 'Click this side\nif you want to use\nthe arrow keys.', {
+      text(center + 250, center + 100, 'Click this side\nif you want to use\nthe arrow keys\nto indicate direction.', {
         fontFamily: 'Verdana',
         fontSize: 32,
         color: '#dddddd',
