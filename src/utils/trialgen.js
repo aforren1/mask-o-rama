@@ -177,6 +177,6 @@ export default function generateTrials(repeats, CLAMP_ANGLE = 15, is_debug = fal
       out.push({trial_type: 'break'})
     }
   }
-  console.log(out)
+  // console.log(out)
   return out
 }

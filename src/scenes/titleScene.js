@@ -49,7 +49,7 @@ export default class TitleScene extends Phaser.Scene {
             refresh_success = false
           }
           console.log(`median: ${est_rate}`)
-          this.game.user_config['hand'] = side
+          this.game.user_config['keys'] = side
           this.game.user_config['refresh_rate_est'] = est_rate
           this.game.user_config['refresh_rate_measured'] = refresh_success
           // TODO: https://docs.google.com/document/d/17pvFMFqtAIx0ZA6zMZRU_A2-VnjhNX9QlN1Cgy-3Wdg/edit
@@ -76,9 +76,9 @@ export default class TitleScene extends Phaser.Scene {
       })
     }
 
-    this.add.rectangle(center - 6, center + 100, 6, 500, 0xffffff)
+    this.add.rectangle(center - 6, center + 100, 6, 300, 0xffffff)
 
-    this.add.rexBBCodeText(center, 120, 'If using a laptop,\nplease plug into a wall outlet\nbefore continuing for best performance.', {
+    this.add.rexBBCodeText(center, height - 120, 'If using a laptop,\nplease plug into a wall outlet\nbefore continuing for best performance.', {
       fontFamily: 'Verdana',
       fontStyle: 'bold',
       fontSize: 40,
@@ -90,7 +90,7 @@ export default class TitleScene extends Phaser.Scene {
       padding: {left: 5, right: 5, top: 5, bottom: 5}
     }).setOrigin(0.5, 0.5)
 
-    this.add.text(center, 270, 'Select one option below to start\n (will enter fullscreen).', {
+    this.add.text(center, 230, 'You will be using the mouse and\nkeyboard (nearly) simultaneously.\n\nYou can either use the arrow keys\nor WASD keys to indicate direction.\n\nPlease select the most comfortable option below to start\n (will enter fullscreen).', {
       fontFamily: 'Verdana',
       fontSize: 32,
       color: '#bbbbbb',
@@ -100,7 +100,7 @@ export default class TitleScene extends Phaser.Scene {
     }).setOrigin(0.5, 0.5)
 
     let left = this.add.
-      text(center - 250, center + 100, 'Click this side\nif using the mouse\nwith your left hand.', {
+      text(center - 250, center + 100, 'Click this side\nif you want to use\nthe WASD keys.', {
         fontFamily: 'Verdana',
         fontSize: 32,
         color: '#dddddd',
@@ -111,10 +111,10 @@ export default class TitleScene extends Phaser.Scene {
       setOrigin(0.5, 0.5).
       setInteractive().
       once('pointerdown', () => {
-        cb('left')
+        cb('wasd')
       })
     let right = this.add.
-      text(center + 250, center + 100, 'Click this side\nif using the mouse\nwith your right hand.', {
+      text(center + 250, center + 100, 'Click this side\nif you want to use\nthe arrow keys.', {
         fontFamily: 'Verdana',
         fontSize: 32,
         color: '#dddddd',
@@ -125,7 +125,7 @@ export default class TitleScene extends Phaser.Scene {
       setOrigin(0.5, 0.5).
       setInteractive().
       once('pointerdown', () => {
-        cb('right')
+        cb('arrows')
       })
   }
   update() {

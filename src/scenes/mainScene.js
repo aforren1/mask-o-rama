@@ -104,8 +104,10 @@ export default class MainScene extends Phaser.Scene {
     this.practice_mask_mts = [] // used for setting simulated clamp speed & max of staircase
     this.is_debug = user_config.debug
 
-    let rk = {yes: 'UP', no: 'DOWN'}
-    this.resp_keys = rk
+    let rk = {yes: 'UP', no: 'DOWN', left: 'LEFT', right: 'RIGHT'}
+    if (user_config['keys'] === 'wasd') {
+      rk = {yes: 'W', no: 'S', left: 'A', right: 'D'}
+    }
 
     // set number of repeats
     if (this.is_debug) {
@@ -154,7 +156,7 @@ export default class MainScene extends Phaser.Scene {
     this.side_question = this.add.rexBBCodeText({
       x: 0,
       y: hd2 / 3,
-      text: '[b]Which side was the [color=yellow]white star[/color] on,\nleft or right?',
+      text: `[b]Which side was the [color=yellow]white star[/color] on,\nleft (${rk['left']} key) or right (${rk['right']} key)?`,
       style: {
         fontFamily: 'Verdana',
         fontStyle: 'bold',
@@ -241,11 +243,13 @@ export default class MainScene extends Phaser.Scene {
     this.rt_ref = 0 //
     this.side_queue = []
     this.side_rt_ref = 0
-    this.input.keyboard.on(`keydown-${rk['yes']}`, (evt) => {
+
+    // add *all* keys as options,
+    this.input.keyboard.on('keydown-UP', (evt) => {
       this.resp_queue.push({detect: true, rt: evt.timeStamp - this.rt_ref})
     })
 
-    this.input.keyboard.on(`keydown-${rk['no']}`, (evt) => {
+    this.input.keyboard.on('keydown-DOWN', (evt) => {
       this.resp_queue.push({detect: false, rt: evt.timeStamp - this.rt_ref})
     })
 
@@ -254,6 +258,22 @@ export default class MainScene extends Phaser.Scene {
     })
 
     this.input.keyboard.on('keydown-RIGHT', (evt) => {
+      this.side_queue.push({side: 'right', rt: evt.timeStamp - this.side_rt_ref})
+    })
+
+    this.input.keyboard.on('keydown-W', (evt) => {
+      this.resp_queue.push({detect: true, rt: evt.timeStamp - this.rt_ref})
+    })
+
+    this.input.keyboard.on('keydown-S', (evt) => {
+      this.resp_queue.push({detect: false, rt: evt.timeStamp - this.rt_ref})
+    })
+
+    this.input.keyboard.on('keydown-A', (evt) => {
+      this.side_queue.push({side: 'left', rt: evt.timeStamp - this.side_rt_ref})
+    })
+
+    this.input.keyboard.on('keydown-D', (evt) => {
       this.side_queue.push({side: 'right', rt: evt.timeStamp - this.side_rt_ref})
     })
 
@@ -337,7 +357,7 @@ export default class MainScene extends Phaser.Scene {
     instruct_txts['instruct_mask'] =
       'In this section, the cursor will be [color=yellow]hidden[/color] by an image at the beginning and end of the movement. The image will be temporarily removed partway through the movement, and you may be able to see the cursor then.\n\nWe will ask you the same question as before:\n\nDid you see the circular cursor, yes or no?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
 
-    instruct_txts['instruct_side'] = 'In this section, we will layer one more task on.\n\nImmediately after the movement, you will see a white [color=yellow]star[/color] either toward the [color=yellow]left[/color] or the [color=yellow]right[/color], relative to the midline of the screen.\n\nWe will ask you to judge whether the star was on the left or right, using the [color=yellow]left[/color] and [color=yellow]right[/color] arrow keys.\n\nWe will then ask you the same question as before:\n\nDid you see the circular cursor, yes or no?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.'
+    instruct_txts['instruct_side'] = `In this section, we will layer one more task on.\n\nImmediately after the movement, you will see a white [color=yellow]star[/color] either toward the [color=yellow]left[/color] or the [color=yellow]right[/color], relative to the midline of the screen.\n\nWe will ask you to judge whether the star was on the left or right, using the [color=yellow]${rk['left']} (left)[/color] and [color=yellow]${rk['right']} (right)[/color] keys.\n\nWe will then ask you the same question as before:\n\nDid you see the circular cursor, yes or no?\n\nRemember to try to make [color=yellow]straight[/color][/b] mouse movements.`
 
     instruct_txts['instruct_probe'] =
       'Great job! We\'ll continue these trials until the end.\n\nThe amount of time the cursor [b]might[/b] be [color=yellow]hidden[/color] may vary over time and you may need to guess sometimes, but always do your best to make [color=yellow]straight mouse movements directly to the target[/color] and answer which side you saw the white [color=yellow]star[/color] on, and whether the cursor was visible or not (though we will no longer say whether you were correct or not).'
@@ -565,16 +585,19 @@ export default class MainScene extends Phaser.Scene {
         this.side_rt_ref = this.game.loop.now
         this.side_queue = []
         this.side_question.visible = true
-        this.star.alpha = 1
+        this.star.alpha = 0
         this.star.x = x
         this.star.y = y
-        this.tweens.add({
-          targets: this.star,
-          duration: 80, // probably not exactly 80-- how important is preciseness here?
-          x: x - 0.1,
-          onComplete: () => {
-            this.star.alpha = 0
-          }
+        this.time.delayedCall(100, () => {
+          this.star.alpha = 1
+          this.tweens.add({
+            targets: this.star,
+            duration: 50, // probably not exactly 50-- how important is preciseness here?
+            x: x - 0.1,
+            onComplete: () => {
+              this.star.alpha = 0
+            }
+          })
         })
       }
 
