@@ -473,8 +473,6 @@ export default class MainScene extends Phaser.Scene {
           evt_time: this.reference_time,
           raw_x: 0,
           raw_y: 0,
-          cursor_x: 0,
-          cursor_y: 0,
           cursor_extent: 0,
           cursor_angle: 0
         })
